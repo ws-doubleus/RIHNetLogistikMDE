@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/umlagerung_navigation"
+    app:startDestination="@+id/navigation_artikel">
+
+    <fragment
+        android:id="@+id/navigation_artikel"
+        android:name="at.rihnet.rihnetlogistikmde.ui.umlagerung.artikel.ArtikelFragment"
+        android:label="@string/title_artikel"
+        tools:layout="@layout/fragment_artikel" />
+
+    <fragment
+        android:id="@+id/navigation_lager"
+        android:name="at.rihnet.rihnetlogistikmde.ui.umlagerung.lager.LagerFragment"
+        android:label="@string/title_lager"
+        tools:layout="@layout/fragment_lager" />
+
+    <fragment
+        android:id="@+id/navigation_queue"
+        android:name="at.rihnet.rihnetlogistikmde.ui.umlagerung.queue.QueueFragment"
+        android:label="@string/title_queue"
+        tools:layout="@layout/fragment_queue" />
+
+    <fragment
+        android:id="@+id/navigation_log"
+        android:name="at.rihnet.rihnetlogistikmde.ui.umlagerung.log.LogFragment"
+        android:label="@string/title_log"
+        tools:layout="@layout/fragment_log" />
+</navigation>

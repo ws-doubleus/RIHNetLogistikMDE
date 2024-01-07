@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/artikelzubuchen_navigation"
+    app:startDestination="@+id/navigation_artikel">
+
+    <fragment
+        android:id="@+id/navigation_artikel"
+        android:name="at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.artikel.ArtikelaFragment"
+        android:label="@string/title_artikel"
+        tools:layout="@layout/fragment_artikel" />
+
+    <fragment
+        android:id="@+id/navigation_lager"
+        android:name="at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.lager.LageraFragment"
+        android:label="@string/title_lager"
+        tools:layout="@layout/fragment_lagerz" />
+
+    <fragment
+        android:id="@+id/navigation_log"
+        android:name="at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.log.LogFragment"
+        android:label="@string/title_log"
+        tools:layout="@layout/fragment_log" />
+</navigation>

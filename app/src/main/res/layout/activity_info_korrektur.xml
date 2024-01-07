@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.infokorrektur.InfoKorrekturActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.RIHNetLogistikMDE.AppBarOverlay"
+        app:elevation="2dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.RIHNetLogistikMDE.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_artikelinfo"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginVertical="8dp"
+                android:enabled="true"
+                android:padding="8dp"
+                android:text="@string/title_artikelinfo"
+                android:textSize="18sp"
+                app:icon="@drawable/ic_article"
+                app:iconGravity="start"
+                app:iconSize="60dp"
+                app:iconTint="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_lagerplatzinfo"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginVertical="8dp"
+                android:enabled="true"
+                android:padding="8dp"
+                android:text="@string/title_lagerplatzinfo2"
+                android:textSize="18sp"
+                app:icon="@drawable/ic_fmd_bad"
+                app:iconGravity="start"
+                app:iconSize="60dp"
+                app:iconTint="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_artikelinfo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_artikelzubuchen"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginVertical="8dp"
+                android:enabled="true"
+                android:padding="8dp"
+                android:text="@string/title_artikelzubuchen"
+                android:textSize="18sp"
+                app:icon="@drawable/ic_playlist_add"
+                app:iconGravity="start"
+                app:iconSize="60dp"
+                app:iconTint="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_lagerplatzinfo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_artikelabbuchen"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginVertical="8dp"
+                android:enabled="true"
+                android:padding="8dp"
+                android:text="@string/title_artikelabbuchen"
+                android:textSize="18sp"
+                app:icon="@drawable/ic_playlist_remove"
+                app:iconGravity="start"
+                app:iconSize="60dp"
+                app:iconTint="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_artikelzubuchen" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

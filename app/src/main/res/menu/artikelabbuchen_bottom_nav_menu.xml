@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_artikel"
+        android:icon="@drawable/ic_category"
+        android:title="@string/title_artikel" />
+
+    <item
+        android:id="@+id/navigation_lager"
+        android:icon="@drawable/ic_warehouse"
+        android:title="@string/title_lager" />
+
+    <item
+        android:id="@+id/navigation_log"
+        android:icon="@drawable/ic_priority_high"
+        android:title="@string/title_log" />
+
+</menu>

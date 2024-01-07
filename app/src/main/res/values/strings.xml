@@ -1,0 +1,131 @@
+<resources>
+    <string name="app_name">RIHNet Logistik</string>
+
+    <string name="title_auslagerung">Auslagerung</string>
+    <string name="title_einlagerung">Einlagerung</string>
+    <string name="title_umlagerung">Umlagerung</string>
+    <string name="title_inventur">Inventur</string>
+    <string name="title_artikelinfo">Artikelinfo</string>
+    <string name="title_infokorrektur">Info &amp; Korrektur</string>
+    <string name="title_info">Info</string>
+    <string name="title_ziellager">Ziellager</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_seriennummer">Seriennummer</string>
+    <string name="title_login">Login</string>
+    <string name="title_charge">Charge</string>
+    <string name="title_umlagern">Umlagern</string>
+    <string name="title_artikel">ARTIKEL</string>
+    <string name="title_lager">LAGER</string>
+    <string name="title_queue">QUEUE</string>
+    <string name="title_log">LOG</string>
+    <string name="title_lagerplatzinfo">Lagerplatzinfo</string>
+    <string name="title_lagerplatzinfo2">Lagerplatz Info</string>
+    <string name="title_artikelzubuchen">Artikel zubuchen</string>
+    <string name="title_artikelabbuchen">Artikel abbuchen</string>
+
+    <!-- Preferences -->
+    <string name="preferenceCategory_sql">SQL</string>
+    <string name="preference_ipadresse">IP-Adresse</string>
+    <string name="preference_port">Port</string>
+    <string name="preference_datenbank">Datenbank</string>
+    <string name="preference_instance">Server-Instanz</string>
+    <string name="preference_benutzername">Benutzername</string>
+    <string name="preference_kennwort">Kennwort</string>
+
+    <string name="preferenceCategory_selectLineApi">SelectLine API</string>
+    <string name="preference_appkey">AppKey</string>
+    <string name="preference_baseaddress">BaseAddress</string>
+    <string name="preference_username">UserName</string>
+    <string name="preference_password">Password</string>
+
+    <string name="preferenceCategory_umlagerung">Umlagerung</string>
+    <string name="preference_standort">Standort</string>
+    <string name="preference_adressnummer">Adressnummer</string>
+
+    <!-- Menu -->
+    <string name="menu_einstellungen">Einstellungen</string>
+    <string name="menu_info">Info</string>
+    <string name="menu_logout">Abmelden</string>
+
+    <!-- Button -->
+    <string name="btn_weiter">WEITER</string>
+    <string name="btn_queue">ZUR QUEUE HINZUFÜGEN</string>
+    <string name="btn_buchen">BUCHEN</string>
+    <string name="btn_reset">RESET</string>
+    <string name="btn_print">DRUCKEN</string>
+    <string name="btn_delete">LÖSCHEN</string>
+    <string name="btn_abbrechen">ABBRECHEN</string>
+    <string name="btn_anmelden">ANMELDEN</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_beenden">BEENDEN</string>
+    <string name="btn_umlagern">UMLAGERN</string>
+
+    <!-- Info -->
+    <string name="info_rihnet_link">https://rihnet.at/</string>
+    <string name="info_versionnummer">%1$d</string>
+    <string name="info_versionname">%1$s</string>
+    <string name="info_versionname_label">Versionname:</string>
+    <string name="info_versionnummer_label">Versionnummer:</string>
+    <string name="info_contentDescription_rihnetLogo">RIHNet-Logo</string>
+
+    <!-- Splash -->
+    <string name="splash_description_logo">--.--.----</string>
+    <string name="title_activity_umlagerung">UmlagerungActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+
+    <!-- Artikel -->
+    <string name="artikel_artikelnummer">Artikelnummer:</string>
+    <string name="artikel_bezeichnung">Bezeichnung:</string>
+    <string name="artikel_zusatz">Zusatz:</string>
+    <string name="artikel_hstartikelnummer">HstArtikelnr.:</string>
+    <string name="artikel_eannummer">EAN:</string>
+    <string name="artikel_menge">Menge:</string>
+    <string name="artikel_bestand">Bestand:</string>
+    <string name="artikel_lager">Lager:</string>
+    <string name="artikel_lagerplatz">Lagerplatz:</string>
+    <string name="artikel_seriecharge">SerieCharge:</string>
+    <string name="artikel_seriennummer">Seriennummer:</string>
+    <string name="artikel_charge">Charge:</string>
+    <string name="artikel_select_seriennummer_contentDescription">Seriennummer auswählen</string>
+    <string name="artikel_select_charge_contentDescription">Charge auswählen</string>
+    <string name="artikel_hint_artikelnummer">Artikelnr., Seriennr.,…</string>
+    <string name="artikel_hint_menge">Menge</string>
+
+    <!-- Queue -->
+    <string name="queue_lagerlagerplatz">Lager | -platz:</string>
+    <string name="queue_pipe">|</string>
+
+    <!-- Lager -->
+    <string name="lager_lager">Lager:</string>
+    <string name="lager_quellager">Quellager:</string>
+    <string name="lager_ziellager">Ziellager:</string>
+    <string name="lager_lagerplatz">Lagerplatz:</string>
+    <string name="lager_grund">Grund:</string>
+
+    <!-- Target-Dialog -->
+    <string name="target_lager">Lager:</string>
+    <string name="target_menge">Menge:</string>
+
+    <!-- Login -->
+    <string name="prompt_benutzer">Benutzer</string>
+    <string name="prompt_passwort">Passwort</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Willkommen,"</string>
+    <string name="invalid_username">Kein gültiger Benutzer!</string>
+    <string name="invalid_password">Passwort ist nicht korrekt!</string>
+    <string name="login_failed">"Login fehlgeschlagen!"</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+
+    <!-- Text -->
+    <string name="text_nodata">Keine Daten verfügbar!</string>
+    <string name="text_artikel_suchen">Artikelnummer, EAN,… eingeben!</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+</resources>

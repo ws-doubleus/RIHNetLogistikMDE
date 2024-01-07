@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:id="@+id/tv_lager_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/acs_lager"
+        android:text="@string/target_lager"
+        android:layout_marginStart="12dp"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintBaseline_toBaselineOf="@+id/acs_lager"
+        app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/acs_lager"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_lager_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_lagerplatz_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/et_lagerplatz"
+        android:layout_marginStart="12dp"
+        android:text="@string/lager_lagerplatz"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_lagerplatz"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/et_lagerplatz"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_max="480dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:autofillHints=""
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_lagerplatz_label"
+        app:layout_constraintTop_toBottomOf="@+id/acs_lager"
+        tools:ignore="DuplicateSpeakableTextCheck"
+        tools:text="20220534" />
+
+    <TextView
+        android:id="@+id/tv_menge_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/et_lagerplatz"
+        android:layout_marginStart="12dp"
+        android:text="@string/target_menge"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_menge"
+        app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/ic_remove"
+            android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+            app:layout_constraintStart_toStartOf="@+id/et_lagerplatz"
+            app:layout_constraintBottom_toBottomOf="@+id/et_menge"/>
+
+        <EditText
+            android:id="@+id/et_menge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:inputType="number"
+            android:maxLines="1"
+            android:text="1"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="?attr/colorAccent"
+            tools:ignore="DuplicateSpeakableTextCheck"
+            app:layout_constraintStart_toEndOf="@+id/btn_remove"
+            app:layout_constraintEnd_toStartOf="@+id/btn_add"
+            app:layout_constraintTop_toBottomOf="@+id/et_lagerplatz"
+            android:hint="@string/artikel_hint_menge"
+            tools:text="1" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/ic_add"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/et_menge"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

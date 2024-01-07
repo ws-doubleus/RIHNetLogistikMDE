@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.umlagerung.buchung.BuchungActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.RIHNetLogistikMDE.AppBarOverlay"
+        app:elevation="2dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.RIHNetLogistikMDE.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="6dp"
+            android:background="@color/gray_200"
+            app:layout_constraintBottom_toTopOf="@+id/btn_abbrechen"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="12dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    app:cardCornerRadius="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="8dp"
+                        android:paddingStart="12dp">
+
+                        <TextView
+                            android:id="@+id/tv_lager_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:labelFor="@+id/acs_lager"
+                            android:text="@string/lager_ziellager"
+                            android:textAlignment="textStart"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            app:layout_constraintTop_toTopOf="@+id/acs_lager"
+                            app:layout_constraintBottom_toBottomOf="@+id/acs_lager"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label" />
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/acs_lager"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_lager_label"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_lagerplatz_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/et_lagerplatz"
+                            android:text="@string/lager_lagerplatz"
+                            android:textAlignment="textStart"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            app:layout_constraintTop_toTopOf="@+id/acs_lagerplatz"
+                            app:layout_constraintBottom_toBottomOf="@+id/acs_lagerplatz"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/acs_lagerplatz"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/acs_lager"
+                            app:layout_constraintTop_toBottomOf="@+id/acs_lager" />
+
+                        <TextView
+                            android:id="@+id/tv_menge_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:labelFor="@+id/et_lagerplatz"
+                            android:text="@string/target_menge"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/et_menge"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label" />
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btn_remove"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+                            app:layout_constraintBottom_toBottomOf="@+id/et_menge"
+                            app:layout_constraintStart_toStartOf="@+id/acs_lager"
+                            app:layout_constraintTop_toTopOf="@+id/et_menge"
+                            app:srcCompat="@drawable/ic_remove" />
+
+                        <EditText
+                            android:id="@+id/et_menge"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:autofillHints=""
+                            android:hint="@string/artikel_hint_menge"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:text="1"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:textColor="?attr/colorAccent"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_add"
+                            app:layout_constraintStart_toEndOf="@+id/btn_remove"
+                            app:layout_constraintTop_toBottomOf="@+id/acs_lagerplatz"
+                            tools:ignore="DuplicateSpeakableTextCheck"
+                            tools:text="1" />
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btn_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="12dp"
+                            android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+                            app:layout_constraintBottom_toBottomOf="@+id/et_menge"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/et_menge"
+                            app:srcCompat="@drawable/ic_add" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tv_artikelnummer_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/artikel_artikelnummer"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_artikelnummer"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_artikelnummer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_artikelnummer_label"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_data"
+                    tools:text="0015.85.5.0" />
+
+                <TextView
+                    android:id="@+id/tv_bezeichnung_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artikel_bezeichnung"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_bezeichnung"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label" />
+
+                <TextView
+                    android:id="@+id/tv_bezeichnung"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="12dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_bezeichnung_label"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_artikelnummer"
+                    tools:text="Musterartikel" />
+
+                <TextView
+                    android:id="@+id/tv_zusatz_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artikel_zusatz"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_zusatz"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label" />
+
+                <TextView
+                    android:id="@+id/tv_zusatz"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="12dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_bezeichnung_label"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_bezeichnung"
+                    tools:text="Zusatz mit sehr langem Text und...." />
+
+                <TextView
+                    android:id="@+id/tv_hstartikelnummer_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artikel_hstartikelnummer"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_hstartikelnummer"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label" />
+
+                <TextView
+                    android:id="@+id/tv_hstartikelnummer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="12dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_bezeichnung_label"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_zusatz"
+                    tools:text="365555azu" />
+
+                <View
+                    android:id="@+id/v_separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@android:color/darker_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_hstartikelnummer" />
+
+                <TextView
+                    android:id="@+id/tv_seriennummercharge_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artikel_seriennummer"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_seriennummercharge"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label" />
+
+                <TextView
+                    android:id="@+id/tv_seriennummercharge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:ellipsize="end"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorAccent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_bezeichnung_label"
+                    app:layout_constraintTop_toBottomOf="@+id/v_separator"
+                    tools:text="2143342428424" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btn_abbrechen"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="6dp"
+            android:text="@string/btn_abbrechen"
+            app:icon="@drawable/ic_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_umlagern"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="6dp"
+            android:text="@string/btn_umlagern"
+            app:icon="@drawable/ic_done"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
