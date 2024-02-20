@@ -1,5 +1,6 @@
 package at.rihnet.rihnetlogistikmde.models;
 
+import androidx.room.Dao;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.List;
 
+@Dao
 @Entity(tableName = "queue")
 public class Artikel implements Serializable {
     @PrimaryKey

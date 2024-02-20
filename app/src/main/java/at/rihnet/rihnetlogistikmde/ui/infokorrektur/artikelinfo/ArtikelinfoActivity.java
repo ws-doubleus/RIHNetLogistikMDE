@@ -125,10 +125,10 @@ public class ArtikelinfoActivity extends AppCompatActivity {
             readListener = decodeResult -> {
                 String result = decodeResult.getText().substring(0, decodeResult.getText().length() - 1);
                 menuItem.expandActionView();
-                searchView.setQuery(result, true);
+                searchView.setQuery(result, false);
                 if (!result.equals(previousQuery)) {
                     previousQuery = result;
-                    artikelinfoViewModel.setSearch(result);
+                    artikelinfoViewModel.setSearch(previousQuery);
                 }
             };
             barcodeManager.addReadListener(readListener);
@@ -165,12 +165,12 @@ public class ArtikelinfoActivity extends AppCompatActivity {
                         artikelinfoViewModel.setSearch(query);
                     }
                 }
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return true;
+                return false;
             }
         });
 
@@ -178,7 +178,7 @@ public class ArtikelinfoActivity extends AppCompatActivity {
     }
 
     private void doSearch(String search) {
-       CommunicationCommon. hideKeyboard(this);
+        CommunicationCommon.hideKeyboard(this);
         if (search != null && search.length() > 0) {
             loadingDialogFragment.show(getSupportFragmentManager(), "fragment_loading_dialog");
             new Handler().postDelayed(() -> {
@@ -200,7 +200,7 @@ public class ArtikelinfoActivity extends AppCompatActivity {
             String standort = prefs.getString("standort", null);
             Artikel artikel = CommunicationSql.getArtikel(s, standort);
             if (artikel != null) {
-                artikel.setLagerBestandList(CommunicationSql.getLagerByArtikelnummer(s, standort));
+                artikel.setLagerBestandList(CommunicationSql.getLagerByArtikelnummer(artikel.getArtikelnummer(), standort));
             }
             return artikel;
         }
@@ -209,10 +209,13 @@ public class ArtikelinfoActivity extends AppCompatActivity {
         protected void onPostExecute(Artikel artikel) {
             artikelinfoViewModel.setArtikel(artikel);
             artikelinfoViewModel.setSearch(null);
-            previousQuery = "";
+            if (artikel == null) {
+                Toast.makeText(getApplicationContext(), "Keine gültige Artikelnummer!", Toast.LENGTH_LONG).show();
+            }
             if (loadingDialogFragment != null) {
                 loadingDialogFragment.dismiss();
             }
+            previousQuery = "";
         }
     }
 

@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "at.rihnet.rihnetlogistikmde"
         minSdk 28
-        versionCode 11
+        versionCode 13
         versionName "24.02.20"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
