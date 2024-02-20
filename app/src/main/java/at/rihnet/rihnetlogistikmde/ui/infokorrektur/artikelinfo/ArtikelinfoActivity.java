@@ -1,6 +1,5 @@
 package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelinfo;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -128,18 +126,10 @@ public class ArtikelinfoActivity extends AppCompatActivity {
                 String result = decodeResult.getText().substring(0, decodeResult.getText().length() - 1);
                 menuItem.expandActionView();
                 searchView.setQuery(result, true);
-                /*
                 if (!result.equals(previousQuery)) {
                     previousQuery = result;
-                    menuItem.expandActionView();
-                    searchView.setQuery(result, false);
-                    hideKeyboard(this);
                     artikelinfoViewModel.setSearch(result);
-                } else {
-                    searchView.requestFocus();
-                    hideKeyboard(this);
                 }
-                */
             };
             barcodeManager.addReadListener(readListener);
         } catch (DecodeException e) {

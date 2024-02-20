@@ -64,7 +64,7 @@ public class TargetDialogFragment extends DialogFragment {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String standort = prefs.getString("standort", null);
-        List<String> lager = CommunicationSql.getZiellager(artikel.getLager(), standort);
+        List<String> lager = CommunicationSql.getZiellager(standort);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner, lager);
         acs_spinner.setAdapter(adapter);
 

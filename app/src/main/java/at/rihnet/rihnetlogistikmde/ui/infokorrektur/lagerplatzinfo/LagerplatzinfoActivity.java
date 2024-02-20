@@ -83,7 +83,7 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String standort = prefs.getString("standort", null);
 
-        List<String> lager = CommunicationSql.getZiellager("", standort);
+        List<String> lager = CommunicationSql.getZiellager(standort);
         adapterLager = new ArrayAdapter<>(getApplicationContext(), R.layout.item_spinner, lager);
         acs_lager.setAdapter(adapterLager);
         acs_lager.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -95,6 +95,11 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
                 lagerplatz.addAll(lb);
                 adapterLagerplatz = new ArrayAdapter<>(getApplicationContext(), R.layout.item_spinner, lagerplatz);
                 acs_lagerplatz.setAdapter(adapterLagerplatz);
+                if (lagerplatzinfoViewModel.getSearch().getValue() != null && lagerplatzinfoViewModel.getSearch().getValue().length() > 0) {
+                    LagerplatzBestand lb0 = lagerplatz.stream().filter(f -> f.getEan().equals(lagerplatzinfoViewModel.getSearch().getValue())).findFirst().orElse(null);
+                    acs_lagerplatz.setSelection(adapterLagerplatz.getPosition(lb0));
+                    lagerplatzinfoViewModel.setSearch("");
+                }
             }
 
             @Override
@@ -224,8 +229,7 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
         protected void onPostExecute(LagerLagerplatz lagerLagerplatz) {
             if (lagerLagerplatz != null) {
                 acs_lager.setSelection(adapterLager.getPosition(lagerLagerplatz.getLager()));
-                LagerplatzBestand lb = lagerplatz.stream().filter(f -> f.getEan().equals(lagerplatzinfoViewModel.getSearch().getValue())).findFirst().orElse(null);
-                acs_lagerplatz.setSelection(adapterLagerplatz.getPosition(lb));
+                lagerplatz.stream().filter(f -> f.getEan().equals(lagerplatzinfoViewModel.getSearch().getValue())).findFirst().ifPresent(lb -> acs_lagerplatz.setSelection(adapterLagerplatz.getPosition(lb)));
             } else {
                 Toast.makeText(getApplicationContext(), "Keine gültige Lagerplatz-EAN!", Toast.LENGTH_LONG).show();
             }

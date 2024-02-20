@@ -132,7 +132,7 @@ public class LagerzFragment extends Fragment implements MenuProvider {
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String standort = prefs.getString("standort", null);
 
-        lager = CommunicationSql.getZiellager("", standort);
+        lager = CommunicationSql.getZiellager(standort);
         adapterLager = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, lager);
         acs_lager.setAdapter(adapterLager);
         acs_lager.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

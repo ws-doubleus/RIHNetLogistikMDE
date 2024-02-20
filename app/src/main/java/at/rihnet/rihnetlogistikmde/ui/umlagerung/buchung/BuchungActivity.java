@@ -123,7 +123,7 @@ public class BuchungActivity extends AppCompatActivity {
             tv_seriennummercharge.setText("");
         }
 
-        lager = CommunicationSql.getZiellager(artikel.getLager(), standort);
+        lager = CommunicationSql.getZiellager(standort);
         adapterLager = new ArrayAdapter<>(getApplicationContext(), R.layout.item_spinner, lager);
         acs_lager.setAdapter(adapterLager);
         acs_lager.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

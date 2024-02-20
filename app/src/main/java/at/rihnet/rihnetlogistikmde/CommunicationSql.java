@@ -14,7 +14,6 @@ import java.util.Objects;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Grund;
-import at.rihnet.rihnetlogistikmde.models.LagerLagerplatz;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
 import at.rihnet.rihnetlogistikmde.models.Lagerplatzinfo;
 import at.rihnet.rihnetlogistikmde.models.SeriennummerCharge;
@@ -259,7 +258,7 @@ public class CommunicationSql {
         return seriennummern;
     }
 
-    public static List<String> getZiellager(String quellager, String standort) {
+    public static List<String> getZiellager(String standort) {
         List<String> ziellager = new ArrayList<>();
         try {
             Connection connection = getConnection();
@@ -542,38 +541,6 @@ public class CommunicationSql {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
         return lb;
-    }
-
-    public static LagerLagerplatz getLagerByLagerplatzId(String standort, Integer lagerplatzId) {
-        try {
-            Connection connection = getConnection();
-            if (connection != null) {
-                Statement statement = connection.createStatement();
-                String query = "SELECT l.Lager, " +
-                        "lp.LAGERPLATZ_ID " +
-                        "CASE " +
-                        "WHEN ISNULL(lp.Bezeichnung, '') = '' " +
-                        "THEN CONVERT(nvarchar(80), lp.Id) " +
-                        "ELSE lp.Bezeichnung " +
-                        "END AS Bezeichnung" +
-                        "FROM LAGERPLATZ lp " +
-                        "LEFT JOIN LAGER l ON lp.Lager = l.Lager " +
-                        "WHERE lp.Id = " + lagerplatzId + " " +
-                        "AND l.Standort = '" + standort + "'";
-                ResultSet resultSet = statement.executeQuery(query);
-                if (resultSet.next()) {
-                    return new LagerLagerplatz(
-                            resultSet.getString("Lager"),
-                            resultSet.getInt("LAGERPLATZ_ID"),
-                            resultSet.getString("Bezeichnung")
-                    );
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
-        }
-        return null;
     }
 
     public static List<Grund> getXLogistikappGruendeByType(String type) {
