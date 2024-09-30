@@ -302,7 +302,7 @@ public class LagerzFragment extends Fragment implements MenuProvider {
                         Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.ARTIKELZUBUCHEN);
                         artikelZubuchenViewModel.addLog(log);
                         logDAO.insert(log);
-                        CommunicationSql.updateBelegFreierText1ByBelegtypBelegnummer(sqlServerData, "M", msc.getManualStorageNumber(), ((Grund) acs_grund.getSelectedItem()).getGrund());
+                        int res = CommunicationSql.updateBelegFreierText1ByBelegtypBelegnummer(sqlServerData, "M", msc.getManualStorageNumber(), ((Grund) acs_grund.getSelectedItem()).getGrund());
                     }
                     //SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(LoginActivity.BENUTZER_PREFS, MODE_PRIVATE);
                     //String benutzer = sharedPreferences.getString(LoginActivity.BENUTZER, "");
