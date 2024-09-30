@@ -1,11 +1,10 @@
 package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.lager;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,15 +41,15 @@ import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.FragmentLagerzBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Grund;
-import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
+import at.rihnet.rihnetlogistikmde.models.Lagerplatz;
 import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.LogKategorie;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.ManualStorageCreated;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.sqlite.LogDAO;
 import at.rihnet.rihnetlogistikmde.sqlite.MyDatabase;
 import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.ArtikelZubuchenViewModel;
 import at.rihnet.rihnetlogistikmde.ui.loading.LoadingDialogFragment;
-import at.rihnet.rihnetlogistikmde.ui.login.LoginActivity;
 
 public class LagerzFragment extends Fragment implements MenuProvider {
     private static final String TAG = "RIHNet";
@@ -59,14 +59,15 @@ public class LagerzFragment extends Fragment implements MenuProvider {
     private ArtikelZubuchenViewModel artikelZubuchenViewModel;
     private Artikel artikel;
     private List<String> lager = new ArrayList<>();
-    private final List<LagerplatzBestand> lagerplatz = new ArrayList<>();
+    private final List<Lagerplatz> lagerplatz = new ArrayList<>();
     private final List<Grund> grund = new ArrayList<>();
     private AppCompatSpinner acs_lager;
     private AppCompatSpinner acs_lagerplatz;
     private AppCompatSpinner acs_grund;
     private ArrayAdapter<String> adapterLager;
-    private ArrayAdapter<LagerplatzBestand> adapterLagerplatz;
+    private ArrayAdapter<Lagerplatz> adapterLagerplatz;
     private SharedPreferences prefs;
+    private SqlServerData sqlServerData;
     private LoadingDialogFragment loadingDialogFragment;
     private TextView tv_artikelnummer;
     private TextView tv_bezeichnung;
@@ -131,8 +132,20 @@ public class LagerzFragment extends Fragment implements MenuProvider {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String standort = prefs.getString("standort", null);
+        String ipadresse = prefs.getString("ipadresse", "");
+        String port = prefs.getString("port", "");
+        String datenbank = prefs.getString("datenbank", "");
+        String instance = prefs.getString("instance", "");
+        String benutzername = prefs.getString("benutzername", "");
+        String kennwort = prefs.getString("kennwort", "");
+        sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
 
-        lager = CommunicationSql.getZiellager(standort);
+        //TODO WS
+        try {
+            lager = CommunicationSql.getZiellager(sqlServerData, standort);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         adapterLager = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, lager);
         acs_lager.setAdapter(adapterLager);
         acs_lager.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -143,10 +156,15 @@ public class LagerzFragment extends Fragment implements MenuProvider {
                     artikel.setLager(selectedItem);
                 }
                 lagerplatz.clear();
-                List<LagerplatzBestand> lb = CommunicationSql.getLagerplatzBestandByLager(selectedItem);
+                List<Lagerplatz> lb = CommunicationSql.getLagerplatzByLager(sqlServerData, selectedItem);
                 lagerplatz.addAll(lb);
                 adapterLagerplatz = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, lagerplatz);
                 acs_lagerplatz.setAdapter(adapterLagerplatz);
+                android.util.Log.e(TAG, "onItemSelected()");
+                if (artikelZubuchenViewModel.getSearchLager().getValue() != null && !artikelZubuchenViewModel.getSearchLager().getValue().isEmpty()) {
+                    lagerplatz.stream().filter(f -> f.getEan().equals(artikelZubuchenViewModel.getSearchLager().getValue())).findFirst().ifPresent(lb0 -> acs_lagerplatz.setSelection(adapterLagerplatz.getPosition(lb0)));
+                    //artikelZubuchenViewModel.setSearchLager("");
+                }
             }
 
             @Override
@@ -158,7 +176,7 @@ public class LagerzFragment extends Fragment implements MenuProvider {
         acs_lagerplatz.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                LagerplatzBestand selectedItem = (LagerplatzBestand) adapterView.getItemAtPosition(i);
+                Lagerplatz selectedItem = (Lagerplatz) adapterView.getItemAtPosition(i);
                 if (artikel != null) {
                     artikel.setLagerplatzId(selectedItem.getLagerplatzId());
                 }
@@ -171,7 +189,7 @@ public class LagerzFragment extends Fragment implements MenuProvider {
         });
 
         grund.clear();
-        grund.addAll(CommunicationSql.getXLogistikappGruendeByType("'E', 'X'"));
+        grund.addAll(CommunicationSql.getXLogistikappGruendeByType(sqlServerData, "'E', 'X'"));
         ArrayAdapter<Grund> adapterGrund = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, grund);
         acs_grund.setAdapter(adapterGrund);
 
@@ -213,13 +231,20 @@ public class LagerzFragment extends Fragment implements MenuProvider {
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(20);
+        searchEditText.setFilters(filters);
+
         searchView.setQueryHint("Suchen...");
         searchLager.onSearchLager(menuItem, searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 0) {
+                if (!query.isEmpty()) {
                     artikelZubuchenViewModel.setSearchLager(query);
+                    menuItem.collapseActionView();
                 }
                 return false;
             }
@@ -238,17 +263,20 @@ public class LagerzFragment extends Fragment implements MenuProvider {
     }
 
     private void doSearch(String search) {
-        CommunicationCommon. hideKeyboard(requireActivity());
-        if (search != null && artikel != null && search.length() > 0) {
-            String lager = CommunicationSql.getLagerByEan(search);
+        CommunicationCommon.hideKeyboard(requireActivity());
+        if (search != null && artikel != null && !search.isEmpty()) {
+            String lager = CommunicationSql.getLagerByEan(sqlServerData, search);
             if (lager != null && this.lager.contains(lager)) {
                 int positionLager = adapterLager.getPosition(lager);
                 acs_lager.setSelection(positionLager);
-                LagerplatzBestand lb1 = lagerplatz.stream().filter(f -> f.getEan().equals(search)).findFirst().orElse(null);
+
+                Lagerplatz lb1 = lagerplatz.stream().filter(f -> f.getEan().equals(search)).findFirst().orElse(null);
                 if (lb1 != null) {
                     int positionLagerplatz = adapterLagerplatz.getPosition(lb1);
                     acs_lagerplatz.setSelection(positionLagerplatz);
                 }
+
+
             } else {
                 Toast.makeText(requireContext(), "Keine gültige Lagerplatz-EAN!", Toast.LENGTH_LONG).show();
             }
@@ -257,11 +285,12 @@ public class LagerzFragment extends Fragment implements MenuProvider {
 
     public void doIt() {
         try {
-            String appKey = prefs.getString("appkey", null);
-            String baseAddress = prefs.getString("baseaddress", null);
-            String userName = prefs.getString("username", null);
-            String password = prefs.getString("password", null);
-            String standort = prefs.getString("standort", null);
+            String appKey = prefs.getString("appkey", "");
+            String baseAddress = prefs.getString("baseaddress", "");
+            String userName = prefs.getString("username", "");
+            String password = prefs.getString("password", "");
+            String standort = prefs.getString("standort", "");
+
             if (CommunicationSelectLine.login(appKey, baseAddress, userName, password)) {
                 android.util.Log.i(TAG, "Anmeldung erfolgreich!");
                 ManualStorageCreated manualStorageCreated = CommunicationSelectLine.createManualStorage(standort);
@@ -270,15 +299,16 @@ public class LagerzFragment extends Fragment implements MenuProvider {
                     ManualStorageCreated msc = CommunicationSelectLine.storePosition(manualStorageCreated.getManualStorageNumber(), artikel, artikel.getMenge());
                     if (msc != null) {
                         android.util.Log.i(TAG, "Belegnummer: " + msc.getManualStorageNumber() + " | Manuelle Lagerung => Belegposition erfolgreich erstellt!");
-                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), LogKategorie.ARTIKELZUBUCHEN);
+                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.ARTIKELZUBUCHEN);
                         artikelZubuchenViewModel.addLog(log);
                         logDAO.insert(log);
+                        CommunicationSql.updateBelegFreierText1ByBelegtypBelegnummer(sqlServerData, "M", msc.getManualStorageNumber(), ((Grund) acs_grund.getSelectedItem()).getGrund());
                     }
-                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(LoginActivity.BENUTZER_PREFS, MODE_PRIVATE);
-                    String benutzer = sharedPreferences.getString(LoginActivity.BENUTZER, "");
-                    CommunicationSelectLine.updateManualStorageAsync(manualStorageCreated.getManualStorageNumber(),((Grund)acs_grund.getSelectedItem()).getGrund(), benutzer);
+                    //SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(LoginActivity.BENUTZER_PREFS, MODE_PRIVATE);
+                    //String benutzer = sharedPreferences.getString(LoginActivity.BENUTZER, "");
+                    //CommunicationSelectLine.updateManualStorageAsync(manualStorageCreated.getManualStorageNumber(),((Grund)acs_grund.getSelectedItem()).getGrund(), devicename);
                 } else {
-                    Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), LogKategorie.ARTIKELZUBUCHEN);
+                    Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.ARTIKELZUBUCHEN);
                     artikelZubuchenViewModel.addLog(log);
                     logDAO.insert(log);
                 }
@@ -288,7 +318,7 @@ public class LagerzFragment extends Fragment implements MenuProvider {
             }
         } catch (Exception e) {
             android.util.Log.e(TAG, Objects.requireNonNull(e.getMessage()));
-            Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: 0\nArtikel Zubuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), LogKategorie.ARTIKELZUBUCHEN);
+            Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: 0\nArtikel Zubuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.ARTIKELZUBUCHEN);
             artikelZubuchenViewModel.addLog(log);
             logDAO.insert(log);
         }

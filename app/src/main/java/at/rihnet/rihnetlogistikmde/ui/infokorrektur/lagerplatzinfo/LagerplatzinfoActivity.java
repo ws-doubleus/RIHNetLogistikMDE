@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +37,10 @@ import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivityLagerplatzinfoBinding;
 import at.rihnet.rihnetlogistikmde.models.LagerLagerplatz;
+import at.rihnet.rihnetlogistikmde.models.Lagerplatz;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
 import at.rihnet.rihnetlogistikmde.models.Lagerplatzinfo;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.loading.LoadingDialogFragment;
 
 public class LagerplatzinfoActivity extends AppCompatActivity {
@@ -49,9 +53,9 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
     private List<Lagerplatzinfo> lagerplatzinfoList = new ArrayList<>();
     private AppCompatSpinner acs_lager;
     private AppCompatSpinner acs_lagerplatz;
-    private final List<LagerplatzBestand> lagerplatz = new ArrayList<>();
+    private final List<Lagerplatz> lagerplatz = new ArrayList<>();
     private ArrayAdapter<String> adapterLager;
-    private ArrayAdapter<LagerplatzBestand> adapterLagerplatz;
+    private ArrayAdapter<Lagerplatz> adapterLagerplatz;
     private LagerplatzinfoRecyclerViewAdapter lagerplatzinfoRecyclerViewAdapter;
 
     @SuppressLint("NotifyDataSetChanged")
@@ -82,8 +86,21 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String standort = prefs.getString("standort", null);
+        String ipadresse = prefs.getString("ipadresse", "");
+        String port = prefs.getString("port", "");
+        String datenbank = prefs.getString("datenbank", "");
+        String instance = prefs.getString("instance", "");
+        String benutzername = prefs.getString("benutzername", "");
+        String kennwort = prefs.getString("kennwort", "");
+        SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
 
-        List<String> lager = CommunicationSql.getZiellager(standort);
+        List<String> lager;
+        //TODO WS
+        try {
+            lager = CommunicationSql.getZiellager(sqlServerData, standort);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         adapterLager = new ArrayAdapter<>(getApplicationContext(), R.layout.item_spinner, lager);
         acs_lager.setAdapter(adapterLager);
         acs_lager.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -91,12 +108,12 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedItem = (String) adapterView.getItemAtPosition(i);
                 lagerplatz.clear();
-                List<LagerplatzBestand> lb = CommunicationSql.getLagerplatzBestandByLager(selectedItem);
+                List<Lagerplatz> lb = CommunicationSql.getLagerplatzByLager(sqlServerData, selectedItem);
                 lagerplatz.addAll(lb);
                 adapterLagerplatz = new ArrayAdapter<>(getApplicationContext(), R.layout.item_spinner, lagerplatz);
                 acs_lagerplatz.setAdapter(adapterLagerplatz);
-                if (lagerplatzinfoViewModel.getSearch().getValue() != null && lagerplatzinfoViewModel.getSearch().getValue().length() > 0) {
-                    LagerplatzBestand lb0 = lagerplatz.stream().filter(f -> f.getEan().equals(lagerplatzinfoViewModel.getSearch().getValue())).findFirst().orElse(null);
+                if (lagerplatzinfoViewModel.getSearch().getValue() != null && !lagerplatzinfoViewModel.getSearch().getValue().isEmpty()) {
+                    Lagerplatz lb0 = lagerplatz.stream().filter(f -> f.getEan().equals(lagerplatzinfoViewModel.getSearch().getValue())).findFirst().orElse(null);
                     acs_lagerplatz.setSelection(adapterLagerplatz.getPosition(lb0));
                     lagerplatzinfoViewModel.setSearch("");
                 }
@@ -111,8 +128,8 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
         acs_lagerplatz.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                LagerplatzBestand selectedItem = (LagerplatzBestand) adapterView.getItemAtPosition(i);
-                List<Lagerplatzinfo> lagerplatzinfos = CommunicationSql.getLagerplatzArtikelnummerByLagerplatzId(standort, selectedItem.getLagerplatzId());
+                Lagerplatz selectedItem = (Lagerplatz) adapterView.getItemAtPosition(i);
+                List<Lagerplatzinfo> lagerplatzinfos = CommunicationSql.getLagerplatzArtikelnummerByLagerplatzId(sqlServerData, standort, selectedItem.getLagerplatzId());
                 lagerplatzinfoViewModel.setLagerplatzinfo(lagerplatzinfos);
             }
 
@@ -172,17 +189,25 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(20);
+        searchEditText.setFilters(filters);
+
         searchView.setQueryHint("Suchen...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (!query.equals(previousQuery)) {
                     previousQuery = query;
-                    if (query.length() > 0) {
+                    if (!query.isEmpty()) {
                         lagerplatzinfoViewModel.setSearch(query);
+                        menuItem.collapseActionView();
                     }
                 }
-                return false;
+
+                return true;
             }
 
             @Override
@@ -194,7 +219,7 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
     }
 
     private void doSearch(String search) {
-        if (search != null && search.length() > 0) {
+        if (search != null && !search.isEmpty()) {
             loadingDialogFragment.show(getSupportFragmentManager(), "fragment_loading_dialog");
             new Handler().postDelayed(() -> {
                 LoadLagerLagerplatzAsyncTask loadLagerLagerplatzAsyncTask = new LoadLagerLagerplatzAsyncTask();
@@ -213,10 +238,17 @@ public class LagerplatzinfoActivity extends AppCompatActivity {
         protected LagerLagerplatz doInBackground(String s) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             String standort = prefs.getString("standort", null);
-            LagerplatzBestand lb = CommunicationSql.getLagerplatzBestandByStandortEan(standort, s);
+            String ipadresse = prefs.getString("ipadresse", "");
+            String port = prefs.getString("port", "");
+            String datenbank = prefs.getString("datenbank", "");
+            String instance = prefs.getString("instance", "");
+            String benutzername = prefs.getString("benutzername", "");
+            String kennwort = prefs.getString("kennwort", "");
+            SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+            LagerplatzBestand lb = CommunicationSql.getLagerplatzBestandByStandortEan(sqlServerData, standort, s);
             if (lb != null) {
                 return new LagerLagerplatz(
-                        lb.getLager(),
+                        lb.getLager0(),
                         lb.getLagerplatzId(),
                         s
                 );

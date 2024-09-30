@@ -34,9 +34,9 @@ import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivityChargeBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.SeriennummerCharge;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 
 public class ChargeActivity extends AppCompatActivity {
-    private ActivityChargeBinding binding;
     private static final String TAG = "RIHNet";
     private ChargeRecyclerViewAdapter chargeRecyclerViewAdapter;
     private final List<SeriennummerCharge> seriennummerChargeList = new ArrayList<>();
@@ -46,18 +46,27 @@ public class ChargeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityChargeBinding.inflate(getLayoutInflater());
+        at.rihnet.rihnetlogistikmde.databinding.ActivityChargeBinding binding = ActivityChargeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String standort = prefs.getString("standort", null);
+        String standort = prefs.getString("standort", "");
+        String ipadresse = prefs.getString("ipadresse", "");
+        String port = prefs.getString("port", "");
+        String datenbank = prefs.getString("datenbank", "");
+        String instance = prefs.getString("instance", "");
+        String benutzername = prefs.getString("benutzername", "");
+        String kennwort = prefs.getString("kennwort", "");
+        SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+
         String artikelnummmer = getIntent().getStringExtra("artikelnummer");
         List<Artikel> queueList = (List<Artikel>) getIntent().getSerializableExtra("queueList");
 
-        List<SeriennummerCharge> scList = CommunicationSql.getSeriennummerCharge(artikelnummmer, standort);
+        List<SeriennummerCharge> scList = CommunicationSql.getSeriennummerCharge(sqlServerData, artikelnummmer, standort);
         seriennummerChargeList.addAll(scList);
         for (SeriennummerCharge item : scList) {
-            int sum = queueList.stream().filter(f -> f.getCharge().equals(item.getNummer())).mapToInt(i -> i.getMenge()).sum();
+            assert queueList != null;
+            int sum = queueList.stream().filter(f -> f.getCharge().equals(item.getNummer())).mapToInt(Artikel::getMenge).sum();
             if (sum >= item.getBestand()) {
                 seriennummerChargeList.remove(item);
             } else {
@@ -127,7 +136,7 @@ public class ChargeActivity extends AppCompatActivity {
             };
             barcodeManager.addReadListener(readListener);
         } catch (DecodeException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
     }
 
@@ -138,7 +147,7 @@ public class ChargeActivity extends AppCompatActivity {
             try {
                 barcodeManager.removeReadListener(readListener);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, String.format("%s", e.getMessage()));
             }
         }
     }
@@ -148,6 +157,7 @@ public class ChargeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.umlagerung_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
+        assert searchView != null;
         searchView.setQueryHint("Suchen...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

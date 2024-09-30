@@ -9,7 +9,7 @@ import androidx.room.Update;
 import java.util.List;
 
 import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.LogKategorie;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 
 @Dao
 public interface LogDAO {
@@ -23,8 +23,8 @@ public interface LogDAO {
     public void delete(Log log);
 
     @Query("DELETE FROM log WHERE kategorie = :kategorie")
-    public void deleteLogByKategorie(LogKategorie kategorie);
+    public void deleteLogByKategorie(Kategorie kategorie);
 
     @Query("SELECT * FROM log WHERE kategorie = :kategorie")
-    public List<Log> getLogByKategorie(LogKategorie kategorie);
+    public List<Log> getLogByKategorie(Kategorie kategorie);
 }

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ManualStorageCreated {
     @JsonProperty("ManualStorageNumber")
-    private String ManualStorageNumber;
+    private String manualStorageNumber;
 
     public String getManualStorageNumber() {
-        return ManualStorageNumber;
+        return manualStorageNumber;
     }
 
     public void setManualStorageNumber(String manualStorageNumber) {
-        this.ManualStorageNumber = manualStorageNumber;
+        this.manualStorageNumber = manualStorageNumber;
     }
 }

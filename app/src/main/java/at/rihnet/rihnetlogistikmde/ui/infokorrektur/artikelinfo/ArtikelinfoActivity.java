@@ -1,5 +1,6 @@
 package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelinfo;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.datalogic.decode.BarcodeManager;
 import com.datalogic.decode.DecodeException;
 import com.datalogic.decode.ReadListener;
 
+import java.io.IOError;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,8 +36,12 @@ import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivityArtikelinfoBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.loading.LoadingDialogFragment;
+import at.rihnet.rihnetlogistikmde.ui.main.MainActivity;
+import android.text.InputFilter;
 
 public class ArtikelinfoActivity extends AppCompatActivity {
     private static final String TAG = "RIHNet";
@@ -53,66 +60,75 @@ public class ArtikelinfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         at.rihnet.rihnetlogistikmde.databinding.ActivityArtikelinfoBinding binding = ActivityArtikelinfoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        try {
+            Toolbar toolbar = binding.toolbar;
+            setSupportActionBar(toolbar);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setLogo(R.drawable.ic_article);
+            getSupportActionBar().setDisplayUseLogoEnabled(true);
+            toolbar.setNavigationOnClickListener(v -> finish());
 
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_article);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
+            sv_data = binding.svData;
+            tv_empty = binding.tvEmpty;
+            TextView tv_artikelnummer = binding.tvArtikelnummer;
+            TextView tv_bezeichnung = binding.tvBezeichnung;
+            TextView tv_zusatz = binding.tvZusatz;
+            TextView tv_hstartikelnummer = binding.tvHstartikelnummer;
+            TextView tv_eannummer = binding.tvEannummer;
+            LinearLayoutCompat ll_lager = binding.llLager;
 
-        sv_data = binding.svData;
-        tv_empty = binding.tvEmpty;
-        TextView tv_artikelnummer = binding.tvArtikelnummer;
-        TextView tv_bezeichnung = binding.tvBezeichnung;
-        TextView tv_zusatz = binding.tvZusatz;
-        TextView tv_hstartikelnummer = binding.tvHstartikelnummer;
-        TextView tv_eannummer = binding.tvEannummer;
-        LinearLayoutCompat ll_lager = binding.llLager;
+            loadingDialogFragment = LoadingDialogFragment.newInstance("Artikelinfo wird geladen...");
+            loadingDialogFragment.setCancelable(false);
 
-        loadingDialogFragment = LoadingDialogFragment.newInstance("Artikelinfo wird geladen...");
-        loadingDialogFragment.setCancelable(false);
-
-        artikelinfoViewModel = new ViewModelProvider(this).get(ArtikelinfoViewModel.class);
-        artikelinfoViewModel.getSearch().observe(this, this::doSearch);
-        artikelinfoViewModel.getArtikel().observe(this, a -> {
-            if (a == null) {
-                sv_data.setVisibility(View.GONE);
-                tv_empty.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Artikelnummer: " + previousQuery + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
-                previousQuery = "";
-            } else {
-                sv_data.setVisibility(View.VISIBLE);
-                tv_empty.setVisibility(View.GONE);
-                tv_artikelnummer.setText(a.getArtikelnummer());
-                tv_bezeichnung.setText(a.getBezeichnung());
-                tv_zusatz.setText(a.getZusatz());
-                tv_hstartikelnummer.setText(a.getHstArtikelnummer());
-                tv_eannummer.setText(a.getEannummer());
-
-                LayoutInflater layoutInflater = getLayoutInflater();
-                List<String> distinctLager = a.getLagerBestandList().stream().map(LagerplatzBestand::getLager).distinct().collect(Collectors.toList());
-                ll_lager.removeAllViews();
-                for (String lager : distinctLager) {
-                    View itemLager = layoutInflater.inflate(R.layout.item_lager, ll_lager, false);
-                    TextView tv_lager = itemLager.findViewById(R.id.tv_lager);
-                    tv_lager.setText(lager);
-                    List<LagerplatzBestand> distinctLagerplatz = a.getLagerBestandList().stream().filter(f -> f.getLager().equals(lager)).collect(Collectors.toList());
-                    LinearLayoutCompat ll_lagerplatz = itemLager.findViewById(R.id.ll_lagerplatz);
-                    for (LagerplatzBestand lb : distinctLagerplatz) {
-                        View itemLagerplatz = layoutInflater.inflate(R.layout.item_lagerplatz, ll_lagerplatz, false);
-                        TextView tv_lagerplatz = itemLagerplatz.findViewById(R.id.tv_lagerplatz);
-                        TextView tv_bestand = itemLagerplatz.findViewById(R.id.tv_bestand);
-                        tv_lagerplatz.setText(lb.getBezeichnung());
-                        tv_bestand.setText(String.valueOf(lb.getBestand()));
-                        ll_lagerplatz.addView(itemLagerplatz);
+            artikelinfoViewModel = new ViewModelProvider(this).get(ArtikelinfoViewModel.class);
+            artikelinfoViewModel.getSearch().observe(this, this::doSearch);
+            artikelinfoViewModel.getArtikel().observe(this, a -> {
+                if (a == null) {
+                    sv_data.setVisibility(View.GONE);
+                    tv_empty.setVisibility(View.VISIBLE);
+                    Toast.makeText(getApplicationContext(), "Artikelnummer: " + previousQuery + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
+                    previousQuery = "";
+                } else {
+                    if(a.getArtikelnummer().equals(("Error"))){
+                        return;
                     }
-                    ll_lager.addView(itemLager);
+                    sv_data.setVisibility(View.VISIBLE);
+                    tv_empty.setVisibility(View.GONE);
+                    tv_artikelnummer.setText(a.getArtikelnummer());
+                    tv_bezeichnung.setText(a.getBezeichnung());
+                    tv_zusatz.setText(a.getZusatz());
+                    tv_hstartikelnummer.setText(a.getHstArtikelnummer());
+                    tv_eannummer.setText(a.getEannummer());
+
+                    LayoutInflater layoutInflater = getLayoutInflater();
+                    List<String> distinctLager = a.getLagerBestandList().stream().map(LagerplatzBestand::getLager0).distinct().collect(Collectors.toList());
+                    ll_lager.removeAllViews();
+                    for (String lager : distinctLager) {
+                        View itemLager = layoutInflater.inflate(R.layout.item_lager, ll_lager, false);
+                        TextView tv_lager = itemLager.findViewById(R.id.tv_lager);
+                        tv_lager.setText(lager);
+                        List<LagerplatzBestand> distinctLagerplatz = a.getLagerBestandList().stream().filter(f -> f.getLager0().equals(lager)).collect(Collectors.toList());
+                        LinearLayoutCompat ll_lagerplatz = itemLager.findViewById(R.id.ll_lagerplatz);
+                        for (LagerplatzBestand lb : distinctLagerplatz) {
+                            View itemLagerplatz = layoutInflater.inflate(R.layout.item_lagerplatz, ll_lagerplatz, false);
+                            TextView tv_lagerplatz = itemLagerplatz.findViewById(R.id.tv_lagerplatz);
+                            TextView tv_bestand = itemLagerplatz.findViewById(R.id.tv_bestand);
+                            tv_lagerplatz.setText(lb.getBezeichnung());
+                            tv_bestand.setText(String.valueOf(lb.getBestand()));
+                            ll_lagerplatz.addView(itemLagerplatz);
+                        }
+                        ll_lager.addView(itemLager);
+                    }
                 }
-            }
-        });
+            });
+        } catch (IOError | Exception error) {
+            Intent i = new Intent(ArtikelinfoActivity.this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            finish();
+        }
     }
 
     @Override
@@ -151,18 +167,26 @@ public class ArtikelinfoActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.umlagerung_menu, menu);
+        getMenuInflater().inflate(R.menu.artikelinfo_menu, menu);
         menuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) menuItem.getActionView();
+
         assert searchView != null;
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(18);
+        searchEditText.setFilters(filters);
+
         searchView.setQueryHint("Suchen...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (!query.equals(previousQuery)) {
                     previousQuery = query;
-                    if (query.length() > 0) {
+                    if (!query.isEmpty()) {
                         artikelinfoViewModel.setSearch(query);
+                        menuItem.collapseActionView();
                     }
                 }
                 return false;
@@ -179,7 +203,7 @@ public class ArtikelinfoActivity extends AppCompatActivity {
 
     private void doSearch(String search) {
         CommunicationCommon.hideKeyboard(this);
-        if (search != null && search.length() > 0) {
+        if (search != null && !search.isEmpty()) {
             loadingDialogFragment.show(getSupportFragmentManager(), "fragment_loading_dialog");
             new Handler().postDelayed(() -> {
                 LoadArtikelAsyncTask loadArtikelAsyncTask = new LoadArtikelAsyncTask();
@@ -196,21 +220,41 @@ public class ArtikelinfoActivity extends AppCompatActivity {
 
         @Override
         protected Artikel doInBackground(String s) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String standort = prefs.getString("standort", null);
-            Artikel artikel = CommunicationSql.getArtikel(s, standort);
-            if (artikel != null) {
-                artikel.setLagerBestandList(CommunicationSql.getLagerByArtikelnummer(artikel.getArtikelnummer(), standort));
+            try {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String standort = prefs.getString("standort", null);
+                String ipadresse = prefs.getString("ipadresse", "");
+                String port = prefs.getString("port", "");
+                String datenbank = prefs.getString("datenbank", "");
+                String instance = prefs.getString("instance", "");
+                String benutzername = prefs.getString("benutzername", "");
+                String kennwort = prefs.getString("kennwort", "");
+                SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+                Artikel artikel = CommunicationSql.getArtikel(sqlServerData, s, standort);
+                if (artikel != null) {
+                    artikel.setLagerBestandList(CommunicationSql.getLagerByArtikelnummer(sqlServerData, artikel.getArtikelnummer(), standort));
+                }
+                return artikel;
+            } catch (IOError | Exception error) {
+                return new Artikel("Error", "", "", "", "", "", 0, 0, "", "", "", "", 0, "", Kategorie.UMLAGERUNG);
             }
-            return artikel;
         }
 
         @Override
         protected void onPostExecute(Artikel artikel) {
-            artikelinfoViewModel.setArtikel(artikel);
-            artikelinfoViewModel.setSearch(null);
             if (artikel == null) {
+                artikelinfoViewModel.setArtikel(null);
+                artikelinfoViewModel.setSearch(null);
                 Toast.makeText(getApplicationContext(), "Keine gültige Artikelnummer!", Toast.LENGTH_LONG).show();
+            } else {
+                if (artikel.getArtikelnummer().equals("Error")) {
+                    Intent i = new Intent(ArtikelinfoActivity.this, MainActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                    finish();
+                }
+                    artikelinfoViewModel.setArtikel(artikel);
+                    artikelinfoViewModel.setSearch(null);
             }
             if (loadingDialogFragment != null) {
                 loadingDialogFragment.dismiss();

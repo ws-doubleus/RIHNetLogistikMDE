@@ -34,6 +34,7 @@ import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivitySeriennummerBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.SeriennummerCharge;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
 
 public class SeriennummerActivity extends AppCompatActivity {
@@ -50,11 +51,19 @@ public class SeriennummerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String standort = prefs.getString("standort", null);
+        String standort = prefs.getString("standort", "");
+        String ipadresse = prefs.getString("ipadresse", "");
+        String port = prefs.getString("port", "");
+        String datenbank = prefs.getString("datenbank", "");
+        String instance = prefs.getString("instance", "");
+        String benutzername = prefs.getString("benutzername", "");
+        String kennwort = prefs.getString("kennwort", "");
+        SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+
         String artikelnummmer = getIntent().getStringExtra("artikelnummer");
         List<Artikel> queueList = (List<Artikel>) getIntent().getSerializableExtra("queueList");
 
-        List<SeriennummerCharge> seriennummerChargeList = CommunicationSql.getSeriennummerCharge(artikelnummmer, standort);
+        List<SeriennummerCharge> seriennummerChargeList = CommunicationSql.getSeriennummerCharge(sqlServerData, artikelnummmer, standort);
         assert queueList != null;
         for (Artikel item: queueList) {
             SeriennummerCharge l = seriennummerChargeList.stream().filter(f -> f.getNummer().equals(item.getSeriennummer())).findAny().orElse(null)  ;

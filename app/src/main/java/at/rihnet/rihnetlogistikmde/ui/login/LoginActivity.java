@@ -156,8 +156,8 @@ public class LoginActivity extends AppCompatActivity {
                 String instance = prefs.getString("instance", null);
                 String benutzername = prefs.getString("benutzername", null);
                 String kennwort = prefs.getString("kennwort", null);
-                CommunicationSql.connection = null;
-                CommunicationSql.sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+                //CommunicationSql.connection = null;
+                //CommunicationSql.sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
 
                 SharedPreferences sharedPreferences = getSharedPreferences(BENUTZER_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -172,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        menu.removeItem(R.id.action_logout);
+        //menu.removeItem(R.id.action_logout);
         return true;
     }
 
@@ -184,11 +184,11 @@ public class LoginActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_info) {
             showInfoDialog();
             return true;
-        } else if (item.getItemId() == R.id.action_logout) {
+        } /*else if (item.getItemId() == R.id.action_logout) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

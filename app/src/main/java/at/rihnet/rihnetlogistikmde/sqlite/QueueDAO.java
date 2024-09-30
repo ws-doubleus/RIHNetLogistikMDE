@@ -9,8 +9,7 @@ import androidx.room.Update;
 import java.util.List;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
-import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.LogKategorie;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 
 @Dao
 public interface QueueDAO {
@@ -23,6 +22,6 @@ public interface QueueDAO {
     @Delete
     public void delete(Artikel artikel);
 
-   @Query("SELECT * FROM queue")
-    public List<Artikel> getArtikle();
+   @Query("SELECT * FROM queue WHERE kategorie = :kategorie")
+    public List<Artikel> getArtikelByKategorie(Kategorie kategorie);
 }

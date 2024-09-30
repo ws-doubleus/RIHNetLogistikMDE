@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,15 +33,20 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import java.io.IOError;
+import java.util.Objects;
+
 import at.rihnet.rihnetlogistikmde.AsyncTaskExecutorService;
 import at.rihnet.rihnetlogistikmde.CommunicationCommon;
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.FragmentArtikelaBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.ArtikelAbbuchenViewModel;
 import at.rihnet.rihnetlogistikmde.ui.loading.LoadingDialogFragment;
-import at.rihnet.rihnetlogistikmde.ui.umlagerung.artikel.ArtikelFragment;
+import at.rihnet.rihnetlogistikmde.ui.main.MainActivity;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.artikel.ChargeActivity;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.artikel.SeriennummerActivity;
 
@@ -60,16 +66,13 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
     private ArtikelAbbuchenViewModel artikelAbbuchenViewModel;
     private Button btn_weiter;
     private Artikel artikel;
-    private final Handler handler = new Handler();
-    private Runnable runnable;
-    private final boolean isQueryHandled = true;
     private String previousQuery = "";
 
     public interface OnChangeTab {
         void onChangeTab(int id);
     }
 
-    public interface OnSearchArtikel{
+    public interface OnSearchArtikel {
         void onSearchArtikel(MenuItem menuItem, SearchView searchView);
     }
 
@@ -165,7 +168,7 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
                 if (editable.toString().equals("0")) {
                     et_menge.setText("1");
                 }
-                if (editable.toString().length() == 0 || editable.toString().equals("0") || editable.toString().equals("1")) {
+                if (editable.toString().isEmpty() || editable.toString().equals("0") || editable.toString().equals("1")) {
                     btn_remove.setEnabled(false);
                     btn_remove.setImageAlpha(50);
                 } else {
@@ -245,7 +248,10 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
 
         artikelaViewModel.getArtikel().observe(getViewLifecycleOwner(), artikel -> {
             this.artikel = artikel;
-            if (artikel != null && artikel.getBestand() > 0) {
+            if (artikel != null && artikel.getBestand() > 0 && !artikel.getSerieCharge().equals("S")) {
+                if (artikel.getArtikelnummer().equals(("Error"))) {
+                    return;
+                }
                 et_menge.setText(String.valueOf(artikel.getMenge()));
                 tv_artikelnummer.setText(artikel.getArtikelnummer());
                 tv_bezeichnung.setText(artikel.getBezeichnung());
@@ -268,6 +274,8 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
             } else {
                 if (artikel == null) {
                     Toast.makeText(getContext(), "Artikelnummer: " + artikelAbbuchenViewModel.getSearchArtikel().getValue() + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
+                } else if (artikel.getSerieCharge().equals("S")) {
+                    Toast.makeText(getContext(), "Artikelnummer: " + artikelAbbuchenViewModel.getSearchArtikel().getValue() + "\nArtikel mit Seriennummer werden noch nicht unterstützt!", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "Artikelnummer: " + artikelAbbuchenViewModel.getSearchArtikel().getValue() + " | Bestand: 0 | Artikel kann nicht abgebucht werden!", Toast.LENGTH_LONG).show();
                 }
@@ -323,6 +331,12 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(18);
+        searchEditText.setFilters(filters);
+
         searchView.setQueryHint("Suchen...");
         searchArtikel.onSearchArtikel(menuItem, searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -330,8 +344,9 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
             public boolean onQueryTextSubmit(String query) {
                 if (!query.equals(previousQuery)) {
                     previousQuery = query;
-                    if (query.length() > 0) {
+                    if (!query.isEmpty()) {
                         artikelAbbuchenViewModel.setSearchArtikel(query);
+                        menuItem.collapseActionView();
                     }
                 }
                 return false;
@@ -351,15 +366,12 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
     }
 
     private void doSearch(String search) {
-        CommunicationCommon. hideKeyboard(requireActivity());
-        if (search != null && search.length() > 0) {
+        CommunicationCommon.hideKeyboard(requireActivity());
+        if (search != null && !search.isEmpty()) {
             loadingDialogFragment.show(getChildFragmentManager(), "fragment_loading_dialog");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    LoadArtikelAsyncTask loadArtikelAsyncTask = new LoadArtikelAsyncTask();
-                    loadArtikelAsyncTask.execute(search);
-                }
+            new Handler().postDelayed(() -> {
+                LoadArtikelAsyncTask loadArtikelAsyncTask = new LoadArtikelAsyncTask();
+                loadArtikelAsyncTask.execute(search);
             }, 300);
         }
     }
@@ -371,7 +383,7 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
     }
 
     private void setBtnWeiterEnabled() {
-        if (et_menge.getText().toString().length() > 0 && tv_artikelnummer.getText().toString().length() > 0) {
+        if (!et_menge.getText().toString().isEmpty() && !tv_artikelnummer.getText().toString().isEmpty()) {
             Artikel artikel = artikelaViewModel.getArtikel().getValue();
             assert artikel != null;
             if (artikel.getSerieCharge().equals("O")) {
@@ -392,9 +404,21 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
 
         @Override
         protected Artikel doInBackground(String s) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            String standort = prefs.getString("standort", null);
-            return CommunicationSql.getArtikel(s, standort);
+            try {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                String standort = prefs.getString("standort", null);
+                String ipadresse = prefs.getString("ipadresse", "");
+                String port = prefs.getString("port", "");
+                String datenbank = prefs.getString("datenbank", "");
+                String instance = prefs.getString("instance", "");
+                String benutzername = prefs.getString("benutzername", "");
+                String kennwort = prefs.getString("kennwort", "");
+                SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+
+                return CommunicationSql.getArtikel(sqlServerData, s, standort);
+            } catch (IOError | Exception error) {
+                return new Artikel("Error", "", "", "", "", "", 0, 0, "", "", "", "", 0, "", Kategorie.ARTIKELABBUCHEN);
+            }
         }
 
         @Override
@@ -405,6 +429,11 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
                 btn_add.setImageAlpha(255);
                 setSeriennummerChargeViewVisibility(View.GONE);
             } else {
+                if (artikel.getArtikelnummer().equals("Error")) {
+                    Intent i = new Intent(getActivity(), MainActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                }
                 if (artikel.getSerieCharge().equals("S")) {
                     artikel.setMenge(1);
                     et_menge.setText("1");
@@ -418,6 +447,7 @@ public class ArtikelaFragment extends Fragment implements MenuProvider {
                     btn_add.setImageAlpha(255);
                 }
                 setSeriennummerChargeViewVisibility(View.VISIBLE);
+
             }
             previousQuery = "";
             artikelaViewModel.setArtikel(artikel);

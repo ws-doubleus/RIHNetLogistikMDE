@@ -7,7 +7,7 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import at.rihnet.rihnetlogistikmde.databinding.ActivitySplashBinding;
-import at.rihnet.rihnetlogistikmde.ui.login.LoginActivity;
+import at.rihnet.rihnetlogistikmde.ui.main.MainActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -19,7 +19,8 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            //startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
         }, 2500);
     }

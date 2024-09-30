@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.RIHNetLogistikMDE" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.RIHNetLogistikMDE" parent="Theme.Material3.Light.NoActionBar">
+        <!-- parent="Theme.Material3.DayNight.NoActionBar" -->
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/red_a700</item>
         <item name="colorPrimaryVariant">@color/red_dark</item>

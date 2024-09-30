@@ -3,6 +3,8 @@ package at.rihnet.rihnetlogistikmde;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONException;
@@ -11,11 +13,9 @@ import org.json.JSONObject;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -23,10 +23,16 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.SelectLine.ArticlePositionItem;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.BusinessPartnerDetails;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.CustomFields1;
+import at.rihnet.rihnetlogistikmde.models.SelectLine.DocumentCreateModel;
+import at.rihnet.rihnetlogistikmde.models.SelectLine.DocumentCreated;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.DocumentDetailAddress;
+import at.rihnet.rihnetlogistikmde.models.SelectLine.DocumentPositionCreated;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.DocumentPositionStoreInformation;
+import at.rihnet.rihnetlogistikmde.models.SelectLine.Inventory;
+import at.rihnet.rihnetlogistikmde.models.SelectLine.InventoryArticleEdit;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.ManualStorage;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.ManualStorageCreated;
 import at.rihnet.rihnetlogistikmde.models.SelectLine.ManualStorageUpdate;
@@ -42,7 +48,6 @@ public class CommunicationSelectLine {
     private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
     private static String BASE_ADDRESS;
     private static String ACCESS_TOKEN;
-
 
     public static boolean login(String appKey, String baseAddress, String userName, String password) throws JSONException, NoSuchAlgorithmException, KeyManagementException {
         BASE_ADDRESS = baseAddress;
@@ -84,9 +89,20 @@ public class CommunicationSelectLine {
         try (Response response = client.newCall(request).execute()) {
             ObjectMapper objectMapper = new ObjectMapper();
             if (response.body() != null) {
-                Token token = objectMapper.readValue(response.body().string(), Token.class);
-                ACCESS_TOKEN = token.getAccessToken();
-                return true;
+
+                //Token token = objectMapper.readValue(response.body().string(), Token.class);
+                //ACCESS_TOKEN = token.getAccessToken();
+
+                String responseBody = response.body().string();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                if (jsonNode.has("AccessToken")) {
+                    Token token = objectMapper.treeToValue(jsonNode, Token.class);
+                    ACCESS_TOKEN = token.getAccessToken();
+                    return true;
+                } else {
+                    android.util.Log.e(TAG, "Response ist nicht vom Typ 'Token'!");
+                    return false;
+                }
             } else {
                 return false;
             }
@@ -151,7 +167,7 @@ public class CommunicationSelectLine {
                     return null;
                 }
             } catch (Exception ex) {
-                Log.e(TAG, ex.getMessage());
+                Log.e(TAG, String.format("%s", ex.getMessage()));
                 throw new RuntimeException(ex);
             }
         } catch (Exception e) {
@@ -208,7 +224,7 @@ public class CommunicationSelectLine {
                     return null;
                 }
             } catch (Exception ex) {
-                Log.e(TAG, ex.getMessage());
+                Log.e(TAG, String.format("%s", ex.getMessage()));
                 throw new RuntimeException(ex);
             }
         } catch (Exception e) {
@@ -281,6 +297,9 @@ public class CommunicationSelectLine {
                 } else {
                     return null;
                 }
+            } catch (Exception ex) {
+                Log.e(TAG, String.format("%s", ex.getMessage()));
+                throw new RuntimeException(ex);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -343,6 +362,9 @@ public class CommunicationSelectLine {
                 } else {
                     return null;
                 }
+            } catch (Exception ex) {
+                Log.e(TAG, String.format("%s", ex.getMessage()));
+                throw new RuntimeException(ex);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -394,7 +416,211 @@ public class CommunicationSelectLine {
             try (Response response = client.newCall(request).execute()) {
 
             } catch (Exception ex) {
-                Log.e(TAG, ex.getMessage());
+                Log.e(TAG, Objects.requireNonNull(ex.getMessage()));
+                throw new RuntimeException(ex);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DocumentCreated createDocument(DocumentCreateModel documentCreateModel) {
+        try {
+            @SuppressLint("CustomX509TrustManager") TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCertificates, new java.security.SecureRandom());
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCertificates[0])
+                    .hostnameVerifier((hostname, session) -> true)
+                    .build();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writeValueAsString(documentCreateModel);
+
+            RequestBody requestBody = RequestBody.create(jsonString, JSON_MEDIA_TYPE);
+            Request request = new Request.Builder()
+                    .url(BASE_ADDRESS + "Documents")
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Authorization", "LoginId " + ACCESS_TOKEN)
+                    .post(requestBody)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                if (response.body() != null) {
+                    objectMapper = new ObjectMapper();
+                    String result = response.body().string();
+                    return objectMapper.readValue(result, DocumentCreated.class);
+                } else {
+                    return null;
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, String.format("%s", ex.getMessage()));
+                throw new RuntimeException(ex);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DocumentPositionCreated createDocumentPositionWithArticleItemByDocumentKey(String documentKey, ArticlePositionItem articlePositionItem) {
+        try {
+            @SuppressLint("CustomX509TrustManager") TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCertificates, new java.security.SecureRandom());
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCertificates[0])
+                    .hostnameVerifier((hostname, session) -> true)
+                    .build();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writeValueAsString(articlePositionItem);
+
+            RequestBody requestBody = RequestBody.create(jsonString, JSON_MEDIA_TYPE);
+            Request request = new Request.Builder()
+                    .url(BASE_ADDRESS + "Documents/" + documentKey + "/ArticleItem")
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Authorization", "LoginId " + ACCESS_TOKEN)
+                    .post(requestBody)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                if (response.body() != null) {
+                    objectMapper = new ObjectMapper();
+                    String result = response.body().string();
+                    return objectMapper.readValue(result, DocumentPositionCreated.class);
+                } else {
+                    return null;
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, String.format("%s", ex.getMessage()));
+                throw new RuntimeException(ex);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Inventory> getInventories(String status, String standort) {
+        try {
+            @SuppressLint("CustomX509TrustManager") TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCertificates, new java.security.SecureRandom());
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCertificates[0])
+                    .hostnameVerifier((hostname, session) -> true)
+                    .build();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            Request request = new Request.Builder()
+                    .url(BASE_ADDRESS + "Inventories?filter=Location EQ " + standort + " AND Status EQ " + status)
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Authorization", "LoginId " + ACCESS_TOKEN)
+                    .get()
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                if (response.body() != null) {
+                    String result = response.body().string();
+                    return objectMapper.readValue(result, new TypeReference<List<Inventory>>() {
+                    });
+                } else {
+                    return null;
+                }
+            } catch (Exception ex) {
+                Log.e(TAG, String.format("%s", ex.getMessage()));
+                throw new RuntimeException(ex);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean updateInventoryRaiseArticleQuantity(String number, String warehouse, String article, InventoryArticleEdit inventoryArticleEdit) {
+        try {
+            @SuppressLint("CustomX509TrustManager") TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCertificates, new java.security.SecureRandom());
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCertificates[0])
+                    .hostnameVerifier((hostname, session) -> true)
+                    .build();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writeValueAsString(inventoryArticleEdit);
+
+            RequestBody requestBody = RequestBody.create(jsonString, JSON_MEDIA_TYPE);
+            Request request = new Request.Builder()
+                    .url(BASE_ADDRESS + "Inventories/" + number + "/Warehouses/" + warehouse + "/Articles/" + article)
+                    .addHeader("Accept", "application/json")
+                    .addHeader("Authorization", "LoginId " + ACCESS_TOKEN)
+                    .put(requestBody)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                return response.isSuccessful();
+            } catch (Exception ex) {
+                Log.e(TAG, String.format("%s", ex.getMessage()));
                 throw new RuntimeException(ex);
             }
         } catch (Exception e) {

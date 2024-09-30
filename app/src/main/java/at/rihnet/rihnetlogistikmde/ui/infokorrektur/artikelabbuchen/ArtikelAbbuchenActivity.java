@@ -19,7 +19,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
-import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivityArtikelAbbuchenBinding;
 import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.artikel.ArtikelaFragment;
@@ -58,7 +57,6 @@ public class ArtikelAbbuchenActivity extends AppCompatActivity implements Artike
     @Override
     protected void onResume() {
         super.onResume();
-        CommunicationSql.connection = null;
         if (barcodeManager == null) {
             barcodeManager = new BarcodeManager();
         }

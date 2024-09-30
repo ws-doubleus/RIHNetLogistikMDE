@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.rihnet.rihnetlogistikmde.databinding.FragmentLogBinding;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.LogKategorie;
 import at.rihnet.rihnetlogistikmde.sqlite.LogDAO;
 import at.rihnet.rihnetlogistikmde.sqlite.MyDatabase;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
@@ -48,7 +48,7 @@ public class LogFragment extends Fragment {
             logList = l;
             logRecyclerViewAdapter.setLogs(l);
             logRecyclerViewAdapter.notifyDataSetChanged();
-            if (logList.size() > 0) {
+            if (!logList.isEmpty()) {
                 binding.rvLog.smoothScrollToPosition(logList.size() - 1);
                 rv_log.setVisibility(View.VISIBLE);
                 btn_delete.setVisibility(View.VISIBLE);
@@ -60,13 +60,11 @@ public class LogFragment extends Fragment {
             }
         });
 
-
         btn_delete.setOnClickListener(v -> {
             logList.clear();
-            logDAO.deleteLogByKategorie(LogKategorie.UMLAGERUNG);
             umlagerungViewModel.setLog(logList);
+            logDAO.deleteLogByKategorie(Kategorie.UMLAGERUNG);
         });
-
 
         logRecyclerViewAdapter = new LogRecyclerViewAdapter(logList);
         rv_log.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -84,8 +82,8 @@ public class LogFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Log log = logRecyclerViewAdapter.getLogAt(viewHolder.getAdapterPosition());
                 logList.remove(log);
-                logDAO.delete(log);
                 umlagerungViewModel.setLog(logList);
+                logDAO.delete(log);
                 //logRecyclerViewAdapter.notifyDataSetChanged();
             }
         }).attachToRecyclerView(binding.rvLog);
@@ -100,9 +98,9 @@ public class LogFragment extends Fragment {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").allowMainThreadQueries().build();
+        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
         logDAO = myDatabase.getLogDAO();
-        logList.addAll(logDAO.getLogByKategorie(LogKategorie.UMLAGERUNG));
+        logList.addAll(logDAO.getLogByKategorie(Kategorie.UMLAGERUNG));
 
         umlagerungViewModel.setLog(logList);
 

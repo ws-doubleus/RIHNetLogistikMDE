@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="3dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tv_datum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="13.10.2022" />
+
+        <TextView
+            android:id="@+id/tv_belegnummer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:labelFor="@+id/tv_belegnummer"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:text="@string/inventur_belegnummer"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_belegnummer"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_belegnummer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_belegnummer_label"
+            app:layout_constraintTop_toBottomOf="@+id/tv_datum"
+            tools:text="022023003" />
+
+        <TextView
+            android:id="@+id/tv_inventurtyp_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:labelFor="@+id/tv_inventurtyp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:text="@string/inventur_inventurtyp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_inventurtyp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_belegnummer_label"/>
+
+        <TextView
+            android:id="@+id/tv_inventurtyp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_belegnummer_label"
+            app:layout_constraintTop_toBottomOf="@+id/tv_belegnummer"
+            tools:text="Vollständig (Alle Artikel in allen Lägern)" />
+
+        <TextView
+            android:id="@+id/tv_inventurstatus_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:labelFor="@+id/tv_inventurstatus"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:text="@string/inventur_inventurstatus"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_inventurstatus"
+            app:layout_constraintEnd_toEndOf="@+id/tv_belegnummer_label"/>
+
+        <TextView
+            android:id="@+id/tv_inventurstatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_belegnummer_label"
+            app:layout_constraintTop_toBottomOf="@+id/tv_inventurtyp"
+            tools:text="Begonnen" />
+
+        <TextView
+            android:id="@+id/tv_bemerkung_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/tv_bemerkung"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:text="@string/inventur_bemerkung"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_bemerkung"
+            app:layout_constraintEnd_toEndOf="@+id/tv_belegnummer_label"/>
+
+        <TextView
+            android:id="@+id/tv_bemerkung"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_belegnummer_label"
+            app:layout_constraintTop_toBottomOf="@+id/tv_inventurstatus"
+            tools:text="Test" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

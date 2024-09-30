@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.SeriennummerCharge;
 
 public class UmlagerungViewModel extends ViewModel {
-    private static final String TAG = "RIHNet";
+    //private static final String TAG = "RIHNet";
     private final MutableLiveData<Artikel> mArtikel;
     private final MutableLiveData<String> mSearchArtikel;
     private final MutableLiveData<String> mSearchLager;
@@ -78,7 +78,7 @@ public class UmlagerungViewModel extends ViewModel {
     }
 
     public void resetArtikel() {
-        mArtikel.setValue(new Artikel("", "", "", "", "", "", 1, 1, "", "", "", "", 0, ""));
+        mArtikel.setValue(new Artikel("", "", "", "", "", "", 1, 1, "", "", "", "", 0, "", Kategorie.UMLAGERUNG));
     }
 
     public void setLog(List<Log> value) {

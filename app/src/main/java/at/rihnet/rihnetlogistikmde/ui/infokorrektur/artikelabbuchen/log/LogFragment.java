@@ -2,6 +2,11 @@ package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.log;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,18 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import at.rihnet.rihnetlogistikmde.databinding.FragmentLogBinding;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.LogKategorie;
 import at.rihnet.rihnetlogistikmde.sqlite.LogDAO;
 import at.rihnet.rihnetlogistikmde.sqlite.MyDatabase;
 import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.ArtikelAbbuchenViewModel;
@@ -44,12 +43,12 @@ public class LogFragment extends Fragment {
         TextView tv_empty = binding.tvEmpty;
         Button btn_delete = binding.btnDelete;
 
-        ArtikelAbbuchenViewModel artikelZubuchenViewModel = new ViewModelProvider(requireActivity()).get(ArtikelAbbuchenViewModel.class);
-        artikelZubuchenViewModel.getLog().observe(getViewLifecycleOwner(), l -> {
+        ArtikelAbbuchenViewModel artikelAbbuchenViewModel = new ViewModelProvider(requireActivity()).get(ArtikelAbbuchenViewModel.class);
+        artikelAbbuchenViewModel.getLog().observe(getViewLifecycleOwner(), l -> {
             logList = l;
             logRecyclerViewAdapter.setLogs(l);
             logRecyclerViewAdapter.notifyDataSetChanged();
-            if (logList.size() > 0) {
+            if (!logList.isEmpty()) {
                 binding.rvLog.smoothScrollToPosition(logList.size() - 1);
                 rv_log.setVisibility(View.VISIBLE);
                 btn_delete.setVisibility(View.VISIBLE);
@@ -63,8 +62,8 @@ public class LogFragment extends Fragment {
 
         btn_delete.setOnClickListener(v -> {
             logList.clear();
-            logDAO.deleteLogByKategorie(LogKategorie.ARTIKELABBUCHEN);
-            artikelZubuchenViewModel.setLog(logList);
+            artikelAbbuchenViewModel.setLog(logList);
+            logDAO.deleteLogByKategorie(Kategorie.ARTIKELABBUCHEN);
         });
 
         logRecyclerViewAdapter = new LogRecyclerViewAdapter(logList);
@@ -83,8 +82,8 @@ public class LogFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Log log = logRecyclerViewAdapter.getLogAt(viewHolder.getAdapterPosition());
                 logList.remove(log);
+                artikelAbbuchenViewModel.setLog(logList);
                 logDAO.delete(log);
-                artikelZubuchenViewModel.setLog(logList);
             }
         }).attachToRecyclerView(binding.rvLog);
 
@@ -98,10 +97,10 @@ public class LogFragment extends Fragment {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").allowMainThreadQueries().build();
+        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
         logDAO = myDatabase.getLogDAO();
-        logList.addAll(logDAO.getLogByKategorie(LogKategorie.ARTIKELABBUCHEN));
-        artikelZubuchenViewModel.setLog(logList);
+        logList.addAll(logDAO.getLogByKategorie(Kategorie.ARTIKELABBUCHEN));
+        artikelAbbuchenViewModel.setLog(logList);
 
         return binding.getRoot();
     }

@@ -34,7 +34,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_infokorrektur"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="240dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="8dp"
@@ -52,13 +52,13 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_auslagerung"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="240dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="8dp"
                 android:enabled="false"
                 android:padding="8dp"
-                android:text="@string/title_auslagerung"
+                android:text="@string/title_warenausgang"
                 android:textSize="18sp"
                 app:icon="@drawable/ic_output"
                 app:iconGravity="start"
@@ -69,15 +69,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/btn_infokorrektur" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_einlagerung"
+                android:id="@+id/btn_freierwareneingang"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="240dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="8dp"
-                android:enabled="false"
+                android:enabled="true"
                 android:padding="8dp"
-                android:text="@string/title_einlagerung"
+                android:text="@string/title_freierwareneingang"
                 android:textSize="18sp"
                 app:icon="@drawable/ic_exit_to_app"
                 app:iconGravity="start"
@@ -90,7 +90,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_umlagerung"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="240dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="8dp"
@@ -103,16 +103,16 @@
                 app:iconTint="@color/white"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_einlagerung" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_freierwareneingang" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_inventur"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="240dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="36dp"
                 android:layout_marginVertical="8dp"
-                android:enabled="false"
+                android:enabled="true"
                 android:padding="8dp"
                 android:text="@string/title_inventur"
                 android:textSize="18sp"

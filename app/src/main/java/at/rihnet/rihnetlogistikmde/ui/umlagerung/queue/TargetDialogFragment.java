@@ -27,6 +27,7 @@ import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.FragmentTargetDialogBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
 
 public class TargetDialogFragment extends DialogFragment {
@@ -63,9 +64,23 @@ public class TargetDialogFragment extends DialogFragment {
         umlagerungViewModel = new ViewModelProvider(requireActivity()).get(UmlagerungViewModel.class);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        String standort = prefs.getString("standort", null);
-        List<String> lager = CommunicationSql.getZiellager(standort);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.item_spinner, lager);
+        String standort = prefs.getString("standort", "");
+        String ipadresse = prefs.getString("ipadresse", "");
+        String port = prefs.getString("port", "");
+        String datenbank = prefs.getString("datenbank", "");
+        String instance = prefs.getString("instance", "");
+        String benutzername = prefs.getString("benutzername", "");
+        String kennwort = prefs.getString("kennwort", "");
+        SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+
+        List<String> lager = null;
+        //TODO WS
+        try {
+            lager = CommunicationSql.getZiellager(sqlServerData, standort);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.item_spinner, lager);
         acs_spinner.setAdapter(adapter);
 
         TextWatcher mengeTextWatcher = new TextWatcher() {
@@ -84,14 +99,14 @@ public class TargetDialogFragment extends DialogFragment {
                 if (editable.toString().equals("0")) {
                     et_menge.setText("1");
                 }
-                if (editable.toString().length() == 0 || editable.toString().equals("0") || editable.toString().equals("1")) {
+                if (editable.toString().isEmpty() || editable.toString().equals("0") || editable.toString().equals("1")) {
                     btn_remove.setEnabled(false);
                     btn_remove.setImageAlpha(50);
                 } else {
                     btn_remove.setEnabled(true);
                     btn_remove.setImageAlpha(255);
                 }
-                if (editable.toString().length() > 0 && Integer.parseInt(editable.toString()) >= artikel.getMenge()) {
+                if (!editable.toString().isEmpty() && Integer.parseInt(editable.toString()) >= artikel.getMenge()) {
                     btn_add.setEnabled(false);
                     btn_add.setImageAlpha(50);
                 } else {
@@ -147,7 +162,7 @@ public class TargetDialogFragment extends DialogFragment {
                             android.util.Log.e(TAG, "Anmeldung war nicht erfolgreich!");
                         }
                     } catch (Exception e) {
-                        android.util.Log.e(TAG, e.getMessage());
+                        android.util.Log.e(TAG, Objects.requireNonNull(e.getMessage()));
                     }
                 })
                 .setNegativeButton(R.string.btn_abbrechen, (dialog, id) -> {

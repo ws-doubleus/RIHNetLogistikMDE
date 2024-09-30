@@ -23,6 +23,9 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setLogo(R.drawable.ic_settings);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationOnClickListener(v -> {
+            setResult(1);
+            finish();
+        });
     }
 }

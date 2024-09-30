@@ -58,7 +58,6 @@ public class ArtikelZubuchenActivity extends AppCompatActivity implements Artike
     @Override
     protected void onResume() {
         super.onResume();
-        CommunicationSql.connection = null;
         if (barcodeManager == null) {
             barcodeManager = new BarcodeManager();
         }

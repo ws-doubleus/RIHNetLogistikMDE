@@ -37,7 +37,7 @@ public abstract class AsyncTaskExecutorService<Params, Progress, Result> {
 
     }
 
-    protected abstract Result doInBackground(Params params);
+    protected abstract Result doInBackground(Params params) throws Exception;
 
     protected abstract void onPostExecute(Result result);
 
@@ -57,8 +57,14 @@ public abstract class AsyncTaskExecutorService<Params, Progress, Result> {
         getHandler().post(() -> {
             onPreExecute();
             executor.execute(() -> {
-                Result result = doInBackground(params);
-                getHandler().post(() -> onPostExecute(result));
+                Result result;
+                try {
+                    result = doInBackground(params);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                Result finalResult = result;
+                getHandler().post(() -> onPostExecute(finalResult));
             });
         });
     }

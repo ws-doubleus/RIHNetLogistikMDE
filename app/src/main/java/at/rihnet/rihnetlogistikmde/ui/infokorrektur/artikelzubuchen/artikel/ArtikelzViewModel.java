@@ -5,9 +5,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 
 public class ArtikelzViewModel extends ViewModel {
-    private static final String TAG = "RIHNet";
+    //private static final String TAG = "RIHNet";
     private final MutableLiveData<Artikel> mArtikel;
 
     public ArtikelzViewModel() {
@@ -19,7 +20,7 @@ public class ArtikelzViewModel extends ViewModel {
     }
 
     public void resetArtikel() {
-        mArtikel.setValue(new Artikel("", "", "", "", "", "", 1, 1, "", "", "","", 0, ""));
+        mArtikel.setValue(new Artikel("", "", "", "", "", "", 1, 1, "", "", "","", 0, "", Kategorie.ARTIKELZUBUCHEN));
     }
 
     public void setArtikel(Artikel artikel) {

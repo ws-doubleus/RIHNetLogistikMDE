@@ -1,89 +1,95 @@
 package at.rihnet.rihnetlogistikmde.models.SelectLine;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
 public class DocumentPositionStoreInformation {
     @JsonProperty("Quantity")
-    private double Quantity;
+    private double quantity;
+
     @JsonProperty("ArticleNumber")
-    private String ArticleNumber;
+    private String articleNumber;
+
     @JsonProperty("Warehouse")
-    private String Warehouse;
+    private String warehouse;
+
     @JsonProperty("StoragePlaceIdentifier")
-    private int StoragePlaceIdentifier;
+    private int storagePlaceIdentifier;
+
     @JsonProperty("SerialNumber")
-    private String SerialNumber;
+    private String serialNumber;
+
     @JsonProperty("ExpirationDate")
-    private Date ExpirationDate;
+    private Date expirationDate;
+
     @JsonProperty("TargetWarehouse")
-    private String TargetWarehouse;
+    private String targetWarehouse;
+
     @JsonProperty("TargetStoragePlaceIdentifier")
-    private int TargetStoragePlaceIdentifier;
+    private int targetStoragePlaceIdentifier;
 
     public double getQuantity() {
-        return Quantity;
+        return quantity;
     }
 
     public void setQuantity(double quantity) {
-        this.Quantity = quantity;
+        this.quantity = quantity;
     }
 
     public String getArticleNumber() {
-        return ArticleNumber;
+        return articleNumber;
     }
 
     public void setArticleNumber(String articleNumber) {
-        this.ArticleNumber = articleNumber;
+        this.articleNumber = articleNumber;
     }
 
     public String getWarehouse() {
-        return Warehouse;
+        return warehouse;
     }
 
     public void setWarehouse(String warehouse) {
-        this.Warehouse = warehouse;
+        this.warehouse = warehouse;
     }
 
     public int getStoragePlaceIdentifier() {
-        return StoragePlaceIdentifier;
+        return storagePlaceIdentifier;
     }
 
     public void setStoragePlaceIdentifier(int storagePlaceIdentifier) {
-        this.StoragePlaceIdentifier = storagePlaceIdentifier;
+        this.storagePlaceIdentifier = storagePlaceIdentifier;
     }
 
     public String getSerialNumber() {
-        return SerialNumber;
+        return serialNumber;
     }
 
     public void setSerialNumber(String serialNumber) {
-        this.SerialNumber = serialNumber;
+        this.serialNumber = serialNumber;
     }
 
     public Date getExpirationDate() {
-        return ExpirationDate;
+        return expirationDate;
     }
 
     public void setExpirationDate(Date expirationDate) {
-        this.ExpirationDate = expirationDate;
+        this.expirationDate = expirationDate;
     }
 
     public String getTargetWarehouse() {
-        return TargetWarehouse;
+        return targetWarehouse;
     }
 
     public void setTargetWarehouse(String targetWarehouse) {
-        this.TargetWarehouse = targetWarehouse;
+        this.targetWarehouse = targetWarehouse;
     }
 
     public int getTargetStoragePlaceIdentifier() {
-        return TargetStoragePlaceIdentifier;
+        return targetStoragePlaceIdentifier;
     }
 
     public void setTargetStoragePlaceIdentifier(int targetStoragePlaceIdentifier) {
-        this.TargetStoragePlaceIdentifier = targetStoragePlaceIdentifier;
+        this.targetStoragePlaceIdentifier = targetStoragePlaceIdentifier;
     }
 }

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ManualStorageUpdate {
     @JsonProperty("CustomFields")
-    private CustomFields1 CustomFields;
+    private CustomFields1 customFields;
 
     public CustomFields1 getCustomFields() {
-        return CustomFields;
+        return customFields;
     }
 
     public void setCustomFields(CustomFields1 customFields) {
-        CustomFields = customFields;
+        this.customFields = customFields;
     }
 }

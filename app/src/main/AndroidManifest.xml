@@ -15,6 +15,7 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+        android:configChanges="orientation"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -23,12 +24,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RIHNetLogistikMDE"
         tools:targetApi="33">
-
+        <activity
+            android:name=".ui.verbindungentesten.VerbindungenTestenActivity"
+            android:exported="false"
+            android:label="@string/title_verbindungen_testen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"/>
+        <activity
+            android:name=".ui.inventur.InventurErfassungActivity"
+            android:exported="false"
+            android:label="@string/title_inventur_erfassung"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ui.freierwareneingang.FreierWareneingangActivity"
+            android:exported="false"
+            android:label="@string/title_freierwareneingang"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.inventur.InventurActivity"
             android:exported="false"
-            android:label="@string/title_inventur"/>
-
+            android:label="@string/title_inventur"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.infokorrektur.artikelabbuchen.ArtikelAbbuchenActivity"
             android:exported="false"
@@ -36,7 +55,6 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".ui.infokorrektur.artikelzubuchen.ArtikelZubuchenActivity"
             android:exported="false"
@@ -44,45 +62,50 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".ui.infokorrektur.lagerplatzinfo.LagerplatzinfoActivity"
             android:exported="false"
-            android:label="@string/title_lagerplatzinfo" />
-
+            android:label="@string/title_lagerplatzinfo"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.infokorrektur.InfoKorrekturActivity"
             android:exported="false"
-            android:label="@string/title_infokorrektur"/>
-
+            android:label="@string/title_infokorrektur"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.infokorrektur.artikelinfo.ArtikelinfoActivity"
             android:exported="false"
-            android:label="@string/title_artikelinfo"/>
-
+            android:label="@string/title_artikelinfo"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.umlagerung.buchung.BuchungActivity"
             android:exported="false"
-            android:label="@string/title_umlagern" />
-
-        <activity
+            android:label="@string/title_umlagern"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <!--
+<activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"
             android:label="@string/title_login"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
-
+        -->
         <activity
             android:name=".ui.umlagerung.artikel.ChargeActivity"
             android:exported="false"
-            android:label="@string/title_charge" />
-
+            android:label="@string/title_charge"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.umlagerung.artikel.SeriennummerActivity"
             android:exported="false"
-            android:label="@string/title_seriennummer" />
-
+            android:label="@string/title_seriennummer"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ui.umlagerung.UmlagerungActivity"
             android:exported="false"
@@ -90,13 +113,13 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".ui.splash.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.RIHNetLogistikMDE.Fullscreen"
+            android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -104,21 +127,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
-
     </application>
 
 </manifest>

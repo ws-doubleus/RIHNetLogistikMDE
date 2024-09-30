@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">RIHNet Logistik</string>
 
-    <string name="title_auslagerung">Auslagerung</string>
-    <string name="title_einlagerung">Einlagerung</string>
+    <string name="title_warenausgang">Warenausgang</string>
+    <string name="title_freierwareneingang">Freier Wareneingang</string>
     <string name="title_umlagerung">Umlagerung</string>
     <string name="title_inventur">Inventur</string>
+    <string name="title_inventur_erfassung">Inventur-Erfassung</string>
+    <string name="title_verbindungen_testen">Verbindungen testen</string>
     <string name="title_artikelinfo">Artikelinfo</string>
     <string name="title_infokorrektur">Info &amp; Korrektur</string>
     <string name="title_info">Info</string>
@@ -16,6 +18,7 @@
     <string name="title_umlagern">Umlagern</string>
     <string name="title_artikel">ARTIKEL</string>
     <string name="title_lager">LAGER</string>
+    <string name="title_beleg">BELEG</string>
     <string name="title_queue">QUEUE</string>
     <string name="title_log">LOG</string>
     <string name="title_lagerplatzinfo">Lagerplatzinfo</string>
@@ -24,6 +27,9 @@
     <string name="title_artikelabbuchen">Artikel abbuchen</string>
 
     <!-- Preferences -->
+    <string name="preferenceCategory_mitarbeiter">Mitarbeiter</string>
+    <string name="preference_mitarbeiternummer">Nummer</string>
+
     <string name="preferenceCategory_sql">SQL</string>
     <string name="preference_ipadresse">IP-Adresse</string>
     <string name="preference_port">Port</string>
@@ -45,11 +51,17 @@
     <!-- Menu -->
     <string name="menu_einstellungen">Einstellungen</string>
     <string name="menu_info">Info</string>
+    <string name="menu_test">Verbindungen testen</string>
     <string name="menu_logout">Abmelden</string>
+    <string name="menu_suchen">Suchen…</string>
 
     <!-- Button -->
     <string name="btn_weiter">WEITER</string>
     <string name="btn_queue">ZUR QUEUE HINZUFÜGEN</string>
+    <string name="btn_wareneingang">WARENEINGANG ANLEGEN</string>
+    <string name="btn_hinzufuegen">HINZUFÜGEN</string>
+    <string name="btn_testen">TESTEN</string>
+    <string name="btn_erfassen">ERFASSEN</string>
     <string name="btn_buchen">BUCHEN</string>
     <string name="btn_reset">RESET</string>
     <string name="btn_print">DRUCKEN</string>
@@ -59,6 +71,13 @@
     <string name="btn_ok">OK</string>
     <string name="btn_beenden">BEENDEN</string>
     <string name="btn_umlagern">UMLAGERN</string>
+
+    <!-- RadioButton -->
+    <string name="rb_sqlserver">SQL-Server</string>
+    <string name="rb_selectlineapi">SelectLine-API</string>
+
+    <!-- CheckBox -->
+    <string name="chk_auto_mode">AUTO</string>
 
     <!-- Info -->
     <string name="info_rihnet_link">https://rihnet.at/</string>
@@ -76,6 +95,7 @@
 
     <!-- Artikel -->
     <string name="artikel_artikelnummer">Artikelnummer:</string>
+    <string name="artikel_artikelnr">Artikelnr.:</string>
     <string name="artikel_bezeichnung">Bezeichnung:</string>
     <string name="artikel_zusatz">Zusatz:</string>
     <string name="artikel_hstartikelnummer">HstArtikelnr.:</string>
@@ -96,12 +116,29 @@
     <string name="queue_lagerlagerplatz">Lager | -platz:</string>
     <string name="queue_pipe">|</string>
 
+    <!-- Beleg -->
+    <string name="beleg_lager">Lager:</string>
+    <string name="beleg_lagerplatz">Lagerplatz:</string>
+    <string name="beleg_lieferant">Lieferant:</string>
+    <string name="beleg_lsnr">LS-Nr.:</string>
+    <string name="beleg_lieferscheinnummer">Lieferschein-Nr.</string>
+
     <!-- Lager -->
     <string name="lager_lager">Lager:</string>
     <string name="lager_quellager">Quellager:</string>
     <string name="lager_ziellager">Ziellager:</string>
     <string name="lager_lagerplatz">Lagerplatz:</string>
     <string name="lager_grund">Grund:</string>
+
+    <!-- Inventur -->
+    <string name="inventur_belegnummer">Belegnummer:</string>
+    <string name="inventur_inventurtyp">Typ:</string>
+    <string name="inventur_inventurstatus">Status:</string>
+    <string name="inventur_bemerkung">Bemerkung:</string>
+
+    <!-- Verbindung testen -->
+    <string name="verbindung_pruefen__contentDescription_status_ok">Status-Icon-OK</string>
+    <string name="verbindung_pruefen__contentDescription_status_error">Status-Icon-Error</string>
 
     <!-- Target-Dialog -->
     <string name="target_lager">Lager:</string>
@@ -122,10 +159,14 @@
     <!-- Text -->
     <string name="text_nodata">Keine Daten verfügbar!</string>
     <string name="text_artikel_suchen">Artikelnummer, EAN,… eingeben!</string>
+    <string name="text_verbindungen_testen_ok">Verbindung erfolgreich!</string>
+    <string name="text_verbindungen_testen_error">Verbindung fehlgeschlagen!</string>
 
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

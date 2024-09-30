@@ -6,53 +6,57 @@ import java.util.Date;
 
 public class ManualStorage {
     @JsonProperty("Date")
-    private Date Date;
+    private Date date;
+
     @JsonProperty("WarehouseNumber")
-    private String WarehouseNumber;
+    private String warehouseNumber;
+
     @JsonProperty("BusinessPartnerType")
-    private String BusinessPartnerType;
+    private String businessPartnerType;
+
     @JsonProperty("BusinessPartner")
-    private BusinessPartnerDetails BusinessPartner;
+    private BusinessPartnerDetails businessPartner;
+
     @JsonProperty("WarehouseLocationNumber")
-    private String WarehouseLocationNumber;
+    private String warehouseLocationNumber;
 
     public Date getDate() {
-        return Date;
+        return date;
     }
 
     public void setDate(Date date) {
-        this.Date = date;
+        this.date = date;
     }
 
     public String getWarehouseNumber() {
-        return WarehouseNumber;
+        return warehouseNumber;
     }
 
     public void setWarehouseNumber(String warehouseNumber) {
-        this.WarehouseNumber = warehouseNumber;
+        this.warehouseNumber = warehouseNumber;
     }
 
     public String getBusinessPartnerType() {
-        return BusinessPartnerType;
+        return businessPartnerType;
     }
 
     public void setBusinessPartnerType(String businessPartnerType) {
-        this.BusinessPartnerType = businessPartnerType;
+        this.businessPartnerType = businessPartnerType;
     }
 
     public BusinessPartnerDetails getBusinessPartner() {
-        return BusinessPartner;
+        return businessPartner;
     }
 
     public void setBusinessPartner(BusinessPartnerDetails businessPartner) {
-        this.BusinessPartner = businessPartner;
+        this.businessPartner = businessPartner;
     }
 
     public String getWarehouseLocationNumber() {
-        return WarehouseLocationNumber;
+        return warehouseLocationNumber;
     }
 
     public void setWarehouseLocationNumber(String warehouseLocationNumber) {
-        this.WarehouseLocationNumber = warehouseLocationNumber;
+        this.warehouseLocationNumber = warehouseLocationNumber;
     }
 }

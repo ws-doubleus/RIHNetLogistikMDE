@@ -3,6 +3,7 @@ package at.rihnet.rihnetlogistikmde.ui.umlagerung.lager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +38,10 @@ import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.FragmentLagerBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
 import at.rihnet.rihnetlogistikmde.models.SeriennummerCharge;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.sqlite.MyDatabase;
 import at.rihnet.rihnetlogistikmde.sqlite.QueueDAO;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
@@ -56,6 +60,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
     private ArrayAdapter<String> adapterLager;
     private ArrayAdapter<LagerplatzBestand> adapterLagerplatz;
     private QueueDAO queueDAO;
+    private SqlServerData sqlServerData;
 
     public interface OnChangeTab {
         void onChangeTab(int id);
@@ -73,6 +78,16 @@ public class LagerFragment extends Fragment implements MenuProvider {
         umlagerungViewModel = new ViewModelProvider(requireActivity()).get(UmlagerungViewModel.class);
         artikel = umlagerungViewModel.getArtikel().getValue();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        String standort = prefs.getString("standort", "");
+        String ipadresse = prefs.getString("ipadresse", "");
+        String port = prefs.getString("port", "");
+        String datenbank = prefs.getString("datenbank", "");
+        String instance = prefs.getString("instance", "");
+        String benutzername = prefs.getString("benutzername", "");
+        String kennwort = prefs.getString("kennwort", "");
+        sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+
         TextView tv_artikelnummer = binding.tvArtikelnummer;
         TextView tv_bezeichnung = binding.tvBezeichnung;
         TextView tv_zusatz = binding.tvZusatz;
@@ -88,9 +103,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
             btn_queue.setEnabled(false);
         } else {
             if (artikel.getSerieCharge().equals(("O"))) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                String standort = prefs.getString("standort", null);
-                List<SeriennummerCharge> seriennummerChargeList = CommunicationSql.getSeriennummerCharge(artikel.getArtikelnummer(), standort);
+                List<SeriennummerCharge> seriennummerChargeList = CommunicationSql.getSeriennummerCharge(sqlServerData, artikel.getArtikelnummer(), standort);
                 for (SeriennummerCharge sc : seriennummerChargeList) {
                     lager.add(sc.getLager());
                 }
@@ -131,7 +144,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 } else if (artikel.getSerieCharge().equals("C")) {
                     serie = artikel.getCharge();
                 }
-                List<LagerplatzBestand> lb = CommunicationSql.getLagerplatzBestand(artikel.getArtikelnummer(), selectedItem, serie);
+                List<LagerplatzBestand> lb = CommunicationSql.getLagerplatzBestand(sqlServerData, artikel.getArtikelnummer(), selectedItem, serie);
                 lagerplatz.addAll(lb);
                 //TODO fehlerhaft Lagerplatz - Charge ????
                 for (LagerplatzBestand lb1 : lb) {
@@ -142,6 +155,15 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 }
                 adapterLagerplatz = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, lagerplatz);
                 acs_lagerplatz.setAdapter(adapterLagerplatz);
+                if(umlagerungViewModel.getSearchLager().getValue() != null && !umlagerungViewModel.getSearchLager().getValue().isEmpty()){
+                    LagerplatzBestand lb0 = lagerplatz.stream().filter(f -> f.getEan().equals(umlagerungViewModel.getSearchLager().getValue())).findFirst().orElse(null);
+                    if(lb0 != null) {
+                        acs_lagerplatz.setSelection(adapterLagerplatz.getPosition(lb0));
+                    }else{
+                        umlagerungViewModel.setSearchLager(null);
+                        Toast.makeText(requireContext(), "Keine gültige Lagerplatz-EAN!", Toast.LENGTH_LONG).show();
+                    }
+                }
             }
 
             @Override
@@ -152,6 +174,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
 
         btn_queue.setOnClickListener(view -> {
             artikel.setLager(acs_lager.getSelectedItem().toString());
+            artikel.setKategorie(Kategorie.UMLAGERUNG);
             LagerplatzBestand lb = (LagerplatzBestand) acs_lagerplatz.getSelectedItem();
             if (lb != null) {
                 artikel.setLagerplatz(lb.getBezeichnung());
@@ -161,7 +184,6 @@ public class LagerFragment extends Fragment implements MenuProvider {
                     Toast.makeText(requireContext(), "Die Menge wurde auf " + lb.getBestand() + " Stück reduziert, da der Bestand für diese Charge nicht größer ist !", Toast.LENGTH_LONG).show();
                 }
                 umlagerungViewModel.addQueue(artikel);
-
                 queueDAO.insert(artikel);
 
                 tv_artikelnummer.setText("");
@@ -183,7 +205,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
 
         umlagerungViewModel.getSearchLager().observe(getViewLifecycleOwner(), this::doSearch);
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").allowMainThreadQueries().build();
+        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
         queueDAO = myDatabase.getQueueDAO();
 
         return root;
@@ -214,13 +236,20 @@ public class LagerFragment extends Fragment implements MenuProvider {
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(20);
+        searchEditText.setFilters(filters);
+
         searchView.setQueryHint("Suchen...");
         searchLager.onSearchLager(menuItem, searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 0) {
+                if (!query.isEmpty()) {
                     umlagerungViewModel.setSearchLager(query);
+                    menuItem.collapseActionView();
                 }
                 return false;
             }
@@ -239,11 +268,11 @@ public class LagerFragment extends Fragment implements MenuProvider {
     }
 
     private void doSearch(String search) {
-        CommunicationCommon. hideKeyboard(requireActivity());
-        if (search != null && artikel != null && search.length() > 0) {
-            LagerplatzBestand lb = CommunicationSql.getLagerplatzBestandByEan(artikel.getArtikelnummer(), search);
-            if (lb != null && lager.contains(lb.getLager())) {
-                int positionLager = adapterLager.getPosition(lb.getLager());
+        CommunicationCommon.hideKeyboard(requireActivity());
+        if (search != null && artikel != null && !search.isEmpty()) {
+            LagerplatzBestand lb = CommunicationSql.getLagerplatzBestandByEan(sqlServerData, artikel.getArtikelnummer(), search);
+            if (lb != null && lager.contains(lb.getLager0())) {
+                int positionLager = adapterLager.getPosition(lb.getLager0());
                 acs_lager.setSelection(positionLager);
                 LagerplatzBestand lb1 = lagerplatz.stream().filter(f -> f.getEan().equals(search)).findFirst().orElse(null);
                 if (lb1 != null) {
@@ -252,6 +281,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 }
             } else {
                 Toast.makeText(requireContext(), "Keine gültige Lagerplatz-EAN!", Toast.LENGTH_LONG).show();
+                umlagerungViewModel.setSearchLager(null);
             }
         }
     }

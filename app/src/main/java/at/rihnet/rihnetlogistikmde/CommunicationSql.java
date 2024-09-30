@@ -10,28 +10,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Grund;
+import at.rihnet.rihnetlogistikmde.models.Invbasis;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
+import at.rihnet.rihnetlogistikmde.models.Lagerplatz;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
 import at.rihnet.rihnetlogistikmde.models.Lagerplatzinfo;
+import at.rihnet.rihnetlogistikmde.models.Lieferant;
 import at.rihnet.rihnetlogistikmde.models.SeriennummerCharge;
 import at.rihnet.rihnetlogistikmde.models.SqlServerData;
-import at.rihnet.rihnetlogistikmde.ui.login.data.model.LoggedInUser;
 
 public class CommunicationSql {
     private static final String TAG = "RIHNet";
-    public static SqlServerData sqlServerData;
-    public static Connection connection;
 
-    public static Connection getConnection() {
-        if (connection != null) {
-            return connection;
-        }
-        if (sqlServerData == null) {
-            return null;
-        }
+    public static Connection getConnection(SqlServerData sqlServerData) throws Exception {
+        Connection connection;
         String classes = "net.sourceforge.jtds.jdbc.Driver";
         String url = "jdbc:jtds:sqlserver://" + sqlServerData.getIpadresse() + ":" + sqlServerData.getPort() + "/" + sqlServerData.getDatenbank() + ";instance=" + sqlServerData.getInstance() + ";";
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -40,16 +35,16 @@ public class CommunicationSql {
             Class.forName(classes);
             connection = DriverManager.getConnection(url, sqlServerData.getBenutzername(), sqlServerData.getKennwort());
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
-            connection = null;
+            Log.e(TAG, String.format("%s", e.getMessage()));
+            //connection = null;
+            throw e;
         }
         return connection;
     }
 
-    public static LoggedInUser getMitarbw(String benutzer, String kennwort) {
+    /*public static LoggedInUser getMitarbw(SqlServerData sqlServerData, String benutzer, String kennwort) {
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT Benutzer, " +
@@ -70,20 +65,19 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
         return null;
-    }
+    }*/
 
-    public static Artikel getArtikel(String search, String standort) {
+    public static Artikel getArtikel(SqlServerData sqlServerData, String search, String standort) {
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT rs.Search, " +
                         "rs.Artikelnummer, " +
-                        "rs.Bezeichnung, " +
+                        "ISNULL(rs.Bezeichnung, '') AS Bezeichnung, " +
                         "rs.SerieCharge, " +
                         "rs.SN, " +
                         "ISNULL(a.Zusatz, '') AS Zusatz, " +
@@ -98,14 +92,6 @@ public class CommunicationSql {
                         "LEFT JOIN SERIE s on s.Id = lb.SerieId " +
                         "WHERE rs.Search = '" + search + "' " +
                         "AND l.Standort = '" + standort + "' " +
-                        "AND ( " +
-                        "ISNULL(s.SerieCharge, '') = CASE " +
-                        "WHEN rs.SN IN ('S') " +
-                        "THEN rs.Search " +
-                        "ELSE '' " +
-                        "END " +
-                        "OR rs.SerieCharge = 'C' " +
-                        ") " +
                         "GROUP BY rs.Search, " +
                         "rs.Artikelnummer, " +
                         "rs.Bezeichnung, " +
@@ -135,20 +121,20 @@ public class CommunicationSql {
                             resultSet.getString("EANNummer"),
                             "",
                             0,
-                            sn
+                            sn,
+                            Kategorie.UMLAGERUNG
                     );
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return null;
     }
 
-    public static Artikel getArtikel(String search){
+    public static Artikel getArtikel(SqlServerData sqlServerData, String search) {
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT rs.Search, " +
@@ -166,14 +152,6 @@ public class CommunicationSql {
                         "LEFT JOIN LAGER l ON lp.Lager = l.Lager " +
                         "LEFT JOIN SERIE s ON s.Id = lb.SerieId " +
                         "WHERE rs.Search = '" + search + "' " +
-                        "AND ( " +
-                        "ISNULL(s.SerieCharge, '') = CASE  " +
-                        "WHEN rs.SN IN ('S') " +
-                        "THEN rs.Search " +
-                        "ELSE '' " +
-                        "END " +
-                        "OR rs.SerieCharge = 'C' " +
-                        ") " +
                         "GROUP BY rs.Search, " +
                         "rs.Artikelnummer, " +
                         "rs.Bezeichnung, " +
@@ -203,29 +181,28 @@ public class CommunicationSql {
                             resultSet.getString("EANNummer"),
                             "",
                             0,
-                            sn
+                            sn,
+                            Kategorie.UMLAGERUNG
                     );
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return null;
     }
 
-    public static List<SeriennummerCharge> getSeriennummerCharge(String artikelnummer, String standort) {
+    public static List<SeriennummerCharge> getSeriennummerCharge(SqlServerData sqlServerData, String artikelnummer, String standort) {
         List<SeriennummerCharge> seriennummern = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT lb.Artikelnummer, " +
                         "SUM(ISNULL(lb.Bestand, 0)) AS Bestand, " +
                         "ISNULL(s.SerieCharge, '') AS Nummer, " +
                         "ISNULL(a.SerieCharge, '') AS SerieCharge, " +
-                        "lp.Lager, " +
-                        "s.Verfall " +
+                        "lp.Lager " +
                         "FROM LAGERBESTAND lb " +
                         "LEFT JOIN ART a ON lb.Artikelnummer = a.Artikelnummer " +
                         "LEFT JOIN SERIE s ON lb.SerieId = s.Id " +
@@ -237,10 +214,11 @@ public class CommunicationSql {
                         "GROUP BY lb.Artikelnummer, " +
                         "ISNULL(s.SerieCharge, ''), " +
                         "ISNULL(a.SerieCharge, ''), " +
-                        "lp.Lager, " +
-                        "s.Verfall " +
+                        "lp.Lager " +
                         "ORDER BY ISNULL(a.SerieCharge, '')";
+                Log.e(TAG, "query: " + query);
                 ResultSet resultSet = statement.executeQuery(query);
+                Log.e(TAG, "a");
                 while (resultSet.next()) {
                     seriennummern.add(new SeriennummerCharge(
                             artikelnummer,
@@ -250,18 +228,18 @@ public class CommunicationSql {
                             resultSet.getString("Lager")
                     ));
                 }
+                Log.e(TAG, "b");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return seriennummern;
     }
 
-    public static List<String> getZiellager(String standort) {
+    public static List<String> getZiellager(SqlServerData sqlServerData, String standort) {
         List<String> ziellager = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT Lager " +
@@ -275,16 +253,15 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return ziellager;
     }
 
-    public static List<LagerplatzBestand> getLagerplatzBestand(String artikelnummer, String lager, String serieCharge) {
+    public static List<LagerplatzBestand> getLagerplatzBestand(SqlServerData sqlServerData, String artikelnummer, String lager, String serieCharge) {
         List<LagerplatzBestand> lb = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT lp.Lager, " +
@@ -320,15 +297,14 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return lb;
     }
 
-    public static LagerplatzBestand getLagerplatzBestandByEan(String artikelnummer, String ean) {
+    public static LagerplatzBestand getLagerplatzBestandByEan(SqlServerData sqlServerData, String artikelnummer, String ean) {
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT lp.Lager, " +
@@ -362,15 +338,14 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return null;
     }
 
-    public static String getLagerByEan(String ean){
+    public static String getLagerByEan(SqlServerData sqlServerData, String ean) {
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT Lager " +
@@ -382,15 +357,14 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return null;
     }
 
-    public static LagerplatzBestand getLagerplatzBestandByStandortEan(String standort, String ean) {
+    public static LagerplatzBestand getLagerplatzBestandByStandortEan(SqlServerData sqlServerData, String standort, String ean) {
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT lp.Lager, " +
@@ -422,16 +396,15 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return null;
     }
 
-    public static List<LagerplatzBestand> getLagerplatzBestandByLager(String lager) {
-        List<LagerplatzBestand> lb = new ArrayList<>();
+    public static List<Lagerplatz> getLagerplatzByLager(SqlServerData sqlServerData, String lager) {
+        List<Lagerplatz> lb = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT lp.Lager, " +
@@ -451,26 +424,24 @@ public class CommunicationSql {
                         "ORDER BY lp.Bezeichnung";
                 ResultSet resultSet = statement.executeQuery(query);
                 while (resultSet.next()) {
-                    lb.add(new LagerplatzBestand(
+                    lb.add(new Lagerplatz(
                             resultSet.getString("Lager"),
                             resultSet.getInt("Id"),
                             resultSet.getString("Bezeichnung"),
-                            resultSet.getString("_EAN"),
-                            0
+                            resultSet.getString("_EAN")
                     ));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return lb;
     }
 
-    public static List<Lagerplatzinfo> getLagerplatzArtikelnummerByLagerplatzId(String standort, Integer lagerplatzId) {
+    public static List<Lagerplatzinfo> getLagerplatzArtikelnummerByLagerplatzId(SqlServerData sqlServerData, String standort, Integer lagerplatzId) {
         List<Lagerplatzinfo> lp = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT ISNULL(lb.Artikelnummer, '') AS Artikelnummer, " +
@@ -496,16 +467,15 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return lp;
     }
 
-    public static List<LagerplatzBestand> getLagerByArtikelnummer(String artikelnummer, String standort) {
+    public static List<LagerplatzBestand> getLagerByArtikelnummer(SqlServerData sqlServerData, String artikelnummer, String standort) {
         List<LagerplatzBestand> lb = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT lp.Lager, " +
@@ -537,16 +507,15 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return lb;
     }
 
-    public static List<Grund> getXLogistikappGruendeByType(String type) {
+    public static List<Grund> getXLogistikappGruendeByType(SqlServerData sqlServerData, String type) {
         List<Grund> g = new ArrayList<>();
         try {
-            Connection connection = getConnection();
+            Connection connection = getConnection(sqlServerData);
             if (connection != null) {
                 Statement statement = connection.createStatement();
                 String query = "SELECT ISNULL(_GRUND, '') AS _GRUND, " +
@@ -558,7 +527,7 @@ public class CommunicationSql {
                         "ISNULL(_ORDER, 0)";
                 ResultSet resultSet = statement.executeQuery(query);
                 while (resultSet.next()) {
-                    g.add( new Grund(
+                    g.add(new Grund(
                             resultSet.getString("_GRUND"),
                             resultSet.getString("_TYPE"),
                             resultSet.getInt("_ORDER")
@@ -566,9 +535,138 @@ public class CommunicationSql {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, String.format("%s", e.getMessage()));
         }
         return g;
+    }
+
+    public static List<Lieferant> getLieferanten(SqlServerData sqlServerData) {
+        List<Lieferant> lieferanten = new ArrayList<>();
+        try {
+            Connection connection = getConnection(sqlServerData);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "SELECT ISNULL(Anzeigename, '') AS Anzeigename, " +
+                        "Nummer " +
+                        "FROM Liefer " +
+                        "WHERE ISNULL(Inaktiv, 0) = 0 " +
+                        "ORDER BY ISNULL(Anzeigename, '')";
+                ResultSet resultSet = statement.executeQuery(query);
+                while (resultSet.next()) {
+                    lieferanten.add(new Lieferant(
+                            resultSet.getString("Nummer"),
+                            resultSet.getString("Anzeigename")
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.format("%s", e.getMessage()));
+        }
+        return lieferanten;
+    }
+
+    public static String getStandortBezeichnungByStandort(SqlServerData sqlServerData, String standort) {
+        try {
+            Connection connection = getConnection(sqlServerData);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "SELECT Standort, " +
+                        "ISNULL(Bezeichnung, '') AS Bezeichnung " +
+                        "FROM STANDORTW " +
+                        "WHERE Standort = '" + standort + "'";
+                ResultSet resultSet = statement.executeQuery(query);
+                if (resultSet.next()) {
+                    return resultSet.getString("Bezeichnung");
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.format("%s", e.getMessage()));
+        }
+        return null;
+    }
+
+    public static List<Invbasis> getInvbasisByBelegnummerKennzeichen(SqlServerData sqlServerData, String belegnummer, String kennzeichen) {
+        List<Invbasis> invbases = new ArrayList<>();
+        try {
+            Connection connection = getConnection(sqlServerData);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "SELECT ISNULL(Belegnummer, '') AS Belegnummer, " +
+                        "ISNULL(Nummer, '') AS Nummer, " +
+                        "ISNULL(Bezeichnung, '') AS Bezeichnung " +
+                        "FROM INVBASIS " +
+                        "WHERE Belegnummer = '" + belegnummer + "' " +
+                        "AND Kennzeichen = '" + kennzeichen + "'";
+                ResultSet resultSet = statement.executeQuery(query);
+                while (resultSet.next()) {
+                    invbases.add(new Invbasis(
+                            resultSet.getString("Belegnummer"),
+                            resultSet.getString("Nummer"),
+                            resultSet.getString("Bezeichnung")
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.format("%s", e.getMessage()));
+        }
+        return invbases;
+    }
+
+    public static boolean ExistsSerieCharge(SqlServerData sqlServerData, String serieCharge, String artikelnummer) {
+        try {
+            Connection connection = getConnection(sqlServerData);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "SELECT COUNT(*) AS Anzahl " +
+                        "FROM SERIE " +
+                        "WHERE SerieCharge = '" + serieCharge + "' " +
+                        "AND Artikelnummer = '" + artikelnummer + "'";
+                ResultSet resultSet = statement.executeQuery(query);
+                if (resultSet.next()) {
+                    return resultSet.getInt("Anzahl") > 0;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.format("%s", e.getMessage()));
+        }
+        return false;
+    }
+
+    public static boolean ExistsInventur(SqlServerData sqlServerData, String belegnummer, String serieCharge) {
+        try {
+            Connection connection = getConnection(sqlServerData);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "SELECT COUNT(*) AS Anzahl " +
+                        "FROM INVEN " +
+                        "WHERE Belegnummer = '" + belegnummer + "' " +
+                        "AND SerienNr = '" + serieCharge + "' " +
+                        "AND Ist = 1";
+                ResultSet resultSet = statement.executeQuery(query);
+                if (resultSet.next()) {
+                    return resultSet.getInt("Anzahl") > 0;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.format("%s", e.getMessage()));
+        }
+        return true;
+    }
+
+    public static int updateBelegFreierText1ByBelegtypBelegnummer(SqlServerData sqlServerData, String belegtyp, String belegnummer, String freierText1) {
+        try {
+            Connection connection = getConnection(sqlServerData);
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "UPDATE BELEG " +
+                        "SET FreierText1 = '" + freierText1 + "' " +
+                        "WHERE Belegtyp = '" + belegtyp + "' " +
+                        "AND Belegnummer = '" + belegnummer + "'";
+                return statement.executeUpdate(query);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.format("%s", e.getMessage()));
+        }
+        return 0;
     }
 }

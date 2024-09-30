@@ -1,10 +1,14 @@
 package at.rihnet.rihnetlogistikmde.ui.login.data;
 
+import android.content.SharedPreferences;
+
+import androidx.preference.PreferenceManager;
+
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.login.data.model.LoggedInUser;
 
 import java.io.IOException;
-
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
@@ -15,7 +19,8 @@ public class LoginDataSource {
     public Result<LoggedInUser> login(String username, String kennwort) {
 
         try {
-            LoggedInUser user = CommunicationSql.getMitarbw(username.toUpperCase(), kennwort);
+            //LoggedInUser user = CommunicationSql.getMitarbw( username.toUpperCase(), kennwort);
+            LoggedInUser user = null;
             if (user == null) {
                 return new Result.Error(new IOException("Benutzer hat keine Berechtigung oder Kennwort ist falsch!"));
             } else {

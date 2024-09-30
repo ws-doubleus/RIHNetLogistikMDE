@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DocumentDetailAddress {
     @JsonProperty("Number")
-    private String Number;
+    private String number;
 
     public String getNumber() {
-        return Number;
+        return number;
     }
 
     public void setNumber(String number) {
-        this.Number = number;
+        this.number = number;
     }
 }

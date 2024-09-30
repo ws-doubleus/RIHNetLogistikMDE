@@ -3,9 +3,11 @@ package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.artikel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import at.rihnet.rihnetlogistikmde.AsyncTaskExecutorService;
 import at.rihnet.rihnetlogistikmde.CommunicationCommon;
@@ -36,6 +39,7 @@ import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.FragmentArtikelzBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.ArtikelZubuchenViewModel;
 import at.rihnet.rihnetlogistikmde.ui.loading.LoadingDialogFragment;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.artikel.ChargeActivity;
@@ -63,7 +67,7 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
         void onChangeTab(int id);
     }
 
-    public interface OnSearchArtikel{
+    public interface OnSearchArtikel {
         void onSearchArtikel(MenuItem menuItem, SearchView searchView);
     }
 
@@ -161,7 +165,7 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
                 if (editable.toString().equals("0")) {
                     et_menge.setText("1");
                 }
-                if (editable.toString().length() == 0 || editable.toString().equals("0") || editable.toString().equals("1")) {
+                if (editable.toString().isEmpty() || editable.toString().equals("0") || editable.toString().equals("1")) {
                     btn_remove.setEnabled(false);
                     btn_remove.setImageAlpha(50);
                 } else {
@@ -241,7 +245,7 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
 
         artikelzViewModel.getArtikel().observe(getViewLifecycleOwner(), artikel -> {
             this.artikel = artikel;
-            if (artikel != null) {
+            if (artikel != null && !artikel.getSerieCharge().equals("S")) {
                 et_menge.setText(String.valueOf(artikel.getMenge()));
                 tv_artikelnummer.setText(artikel.getArtikelnummer());
                 tv_bezeichnung.setText(artikel.getBezeichnung());
@@ -262,7 +266,11 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
                 }
                 setBtnWeiterEnabled();
             } else {
-                Toast.makeText(getContext(), "Artikelnummer: " + artikelZubuchenViewModel.getSearchArtikel().getValue() + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
+                if (artikel == null) {
+                    Toast.makeText(getContext(), "Artikelnummer: " + artikelZubuchenViewModel.getSearchArtikel().getValue() + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
+                } else if (artikel.getSerieCharge().equals("S")) {
+                    Toast.makeText(getContext(), "Artikelnummer: " + artikelZubuchenViewModel.getSearchArtikel().getValue() + "\nArtikel mit Seriennummer werden noch nicht unterstützt!", Toast.LENGTH_LONG).show();
+                }
                 et_menge.setText("1");
                 tv_artikelnummer.setText("");
                 tv_bezeichnung.setText("");
@@ -273,7 +281,6 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
                 setSeriennummerChargeViewVisibility(View.GONE);
                 artikelZubuchenViewModel.setArtikel(null);
             }
-
         });
 
         artikelZubuchenViewModel.getSearchArtikel().observe(getViewLifecycleOwner(), this::doSearch);
@@ -315,6 +322,12 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(18);
+        searchEditText.setFilters(filters);
+
         searchView.setQueryHint("Suchen...");
         searchArtikel.onSearchArtikel(menuItem, searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -322,8 +335,9 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
             public boolean onQueryTextSubmit(String query) {
                 if (!query.equals(previousQuery)) {
                     previousQuery = query;
-                    if (query.length() > 0) {
+                    if (!query.isEmpty()) {
                         artikelZubuchenViewModel.setSearchArtikel(query);
+                        menuItem.collapseActionView();
                     }
                 }
                 return false;
@@ -343,12 +357,21 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
     }
 
     private void doSearch(String search) {
-        CommunicationCommon. hideKeyboard(requireActivity());
-        if (search != null && search.length() > 0) {
+        CommunicationCommon.hideKeyboard(requireActivity());
+        if (search != null && !search.isEmpty()) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            String standort = prefs.getString("standort", null);
+            String ipadresse = prefs.getString("ipadresse", "");
+            String port = prefs.getString("port", "");
+            String datenbank = prefs.getString("datenbank", "");
+            String instance = prefs.getString("instance", "");
+            String benutzername = prefs.getString("benutzername", "");
+            String kennwort = prefs.getString("kennwort", "");
+            String[] params = {ipadresse, port, datenbank, instance, benutzername, kennwort, search};
             loadingDialogFragment.show(getChildFragmentManager(), "fragment_loading_dialog");
             new Handler().postDelayed(() -> {
                 LoadArtikelAsyncTask loadArtikelAsyncTask = new LoadArtikelAsyncTask();
-                loadArtikelAsyncTask.execute(search);
+                loadArtikelAsyncTask.execute(params);
             }, 300);
         }
     }
@@ -360,7 +383,7 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
     }
 
     private void setBtnWeiterEnabled() {
-        if (et_menge.getText().toString().length() > 0 && tv_artikelnummer.getText().toString().length() > 0) {
+        if (!et_menge.getText().toString().isEmpty() && !tv_artikelnummer.getText().toString().isEmpty()) {
             Artikel artikel = artikelzViewModel.getArtikel().getValue();
             assert artikel != null;
             if (artikel.getSerieCharge().equals("O")) {
@@ -373,15 +396,18 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
         }
     }
 
-    public class LoadArtikelAsyncTask extends AsyncTaskExecutorService<String, Void, Artikel> {
+    public class LoadArtikelAsyncTask extends AsyncTaskExecutorService<String[], Void, Artikel> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
         @Override
-        protected Artikel doInBackground(String s) {
-            return CommunicationSql.getArtikel(s);
+        protected Artikel doInBackground(String[] s) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            String standort = prefs.getString("standort", "");
+            SqlServerData sqlServerData = new SqlServerData(s[0], s[1], s[2], s[3], s[4], s[5]);
+            return CommunicationSql.getArtikel(sqlServerData, s[6], standort);
         }
 
         @Override

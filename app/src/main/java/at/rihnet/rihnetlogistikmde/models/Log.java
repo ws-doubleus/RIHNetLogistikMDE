@@ -8,14 +8,14 @@ import java.time.format.DateTimeFormatter;
 
 @Entity(tableName = "log")
 public class Log {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private  Long id;
     private String timestamp;
     private String message;
     private int color;
-    private LogKategorie kategorie;
+    private Kategorie kategorie;
 
-    public Log(String message, int color, LogKategorie kategorie) {
+    public Log(String message, int color, Kategorie kategorie) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         this.timestamp = dtf.format(now);
@@ -56,11 +56,11 @@ public class Log {
         this.color = color;
     }
 
-    public LogKategorie getKategorie() {
+    public Kategorie getKategorie() {
         return kategorie;
     }
 
-    public void setKategorie(LogKategorie kategorie) {
+    public void setKategorie(Kategorie kategorie) {
         this.kategorie = kategorie;
     }
 }

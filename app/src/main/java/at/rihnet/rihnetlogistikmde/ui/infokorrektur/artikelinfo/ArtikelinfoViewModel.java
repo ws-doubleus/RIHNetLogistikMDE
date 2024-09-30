@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 
 public class ArtikelinfoViewModel extends ViewModel {
-    private static final String TAG = "RIHNet";
+    //private static final String TAG = "RIHNet";
     private final MutableLiveData<String> mSearch;
     private final MutableLiveData<Artikel> mArtikel;
 

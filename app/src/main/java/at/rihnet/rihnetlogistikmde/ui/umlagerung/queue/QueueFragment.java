@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,28 +32,31 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import java.io.IOError;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.FragmentQueueBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Log;
-import at.rihnet.rihnetlogistikmde.models.LogKategorie;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
+import at.rihnet.rihnetlogistikmde.models.SqlServerData;
 import at.rihnet.rihnetlogistikmde.sqlite.LogDAO;
 import at.rihnet.rihnetlogistikmde.sqlite.MyDatabase;
 import at.rihnet.rihnetlogistikmde.sqlite.QueueDAO;
+import at.rihnet.rihnetlogistikmde.ui.main.MainActivity;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
 import at.rihnet.rihnetlogistikmde.ui.umlagerung.buchung.BuchungActivity;
 
 public class QueueFragment extends Fragment implements MenuProvider {
-    //private final String TAG = "RIHNet";
+    private final String TAG = "RIHNet";
     private FragmentQueueBinding binding;
     private UmlagerungViewModel umlagerungViewModel;
     private QueueRecyclerViewAdapter queueRecyclerViewAdapter;
     private List<Artikel> queueList = new ArrayList<>();
-    private SharedPreferences prefs;
     private QueueDAO queueDAO;
     private LogDAO logDAO;
     private OnSearchQueue searchQueue;
@@ -63,7 +68,6 @@ public class QueueFragment extends Fragment implements MenuProvider {
     @SuppressLint("NotifyDataSetChanged")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentQueueBinding.inflate(inflater, container, false);
-        prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -76,26 +80,33 @@ public class QueueFragment extends Fragment implements MenuProvider {
                         Artikel a = queueRecyclerViewAdapter.getQueueAt(position);
                         if (menge > 0) {
                             queueList.remove(a);
-                            queueDAO.delete(a);
+                            //new Thread(() -> {
+                                queueDAO.delete(a);
+                            //}).start();
                             umlagerungViewModel.setQueue(queueList);
                             if (a.getMenge() > menge) {
                                 a.setMenge(a.getMenge() - menge);
                                 queueList.add(a);
                                 umlagerungViewModel.setQueue(queueList);
                             }
-                            Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + a.getArtikelnummer() + "\nMenge: " + menge + "\nUmlagerung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), LogKategorie.UMLAGERUNG);
+                            Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + a.getArtikelnummer() + "\nMenge: " + menge + "\nUmlagerung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.UMLAGERUNG);
                             umlagerungViewModel.addLog(log);
-                            logDAO.insert(log);
+                            //new Thread(() -> {
+                                logDAO.insert(log);
+                            //}).start();
                         } else {
-                            Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + a.getArtikelnummer() + "\nMenge: " + menge + "\nUmlagerung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), LogKategorie.UMLAGERUNG);
+                            Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + a.getArtikelnummer() + "\nMenge: " + menge + "\nUmlagerung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.UMLAGERUNG);
                             umlagerungViewModel.addLog(log);
-                            logDAO.insert(log);
+                            //new Thread(() -> {
+                                logDAO.insert(log);
+                            //}).start();
                         }
-                    } else {
-                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: ---\nMenge: 0\nUmlagerung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), LogKategorie.UMLAGERUNG);
-                        umlagerungViewModel.addLog(log);
-                        logDAO.insert(log);
-                    }
+                    } //else {
+                    //TODO WS nicht nötig
+                    //Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: ---\nMenge: 0\nUmlagerung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), LogKategorie.UMLAGERUNG);
+                    //umlagerungViewModel.addLog(log);
+                    //logDAO.insert(log);
+                    //}
                 }
         );
 
@@ -107,7 +118,7 @@ public class QueueFragment extends Fragment implements MenuProvider {
             queueList = q;
             queueRecyclerViewAdapter.setQueue(q);
             queueRecyclerViewAdapter.notifyDataSetChanged();
-            if (queueList.size() > 0) {
+            if (!queueList.isEmpty()) {
                 binding.rvQueue.smoothScrollToPosition(queueList.size() - 1);
                 rv_queue.setVisibility(View.VISIBLE);
                 tv_empty.setVisibility(View.GONE);
@@ -141,8 +152,10 @@ public class QueueFragment extends Fragment implements MenuProvider {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Artikel artikel = queueRecyclerViewAdapter.getQueueAt(viewHolder.getAdapterPosition());
-                queueDAO.delete(artikel);
                 umlagerungViewModel.removeQueue(artikel);
+                //new Thread(() -> {
+                    queueDAO.delete(artikel);
+                //}).start();
             }
         }).attachToRecyclerView(binding.rvQueue);
 
@@ -157,10 +170,15 @@ public class QueueFragment extends Fragment implements MenuProvider {
         }
 
         MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
-        queueDAO = myDatabase.getQueueDAO();
-        logDAO = myDatabase.getLogDAO();
-        queueList.addAll(queueDAO.getArtikle());
-        umlagerungViewModel.setQueue(queueList);
+        //new Thread(() -> {
+            queueDAO = myDatabase.getQueueDAO();
+            logDAO = myDatabase.getLogDAO();
+            queueList.addAll(queueDAO.getArtikelByKategorie(Kategorie.UMLAGERUNG));
+            //new Handler(Looper.getMainLooper()).post(() -> {
+                umlagerungViewModel.setQueue(queueList);
+               android.util.Log.e(TAG, "umlagerungViewModel.getQueue(): " + Objects.requireNonNull(umlagerungViewModel.getQueue().getValue()).size());
+            //});
+        //}).start();
 
         return binding.getRoot();
     }
@@ -175,6 +193,12 @@ public class QueueFragment extends Fragment implements MenuProvider {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -212,14 +236,29 @@ public class QueueFragment extends Fragment implements MenuProvider {
     }
 
     private void doSearch(String search) {
-        //CommunicationCommon. hideKeyboard(requireActivity());
-        String standort = prefs.getString("standort", null);
-        Artikel a = CommunicationSql.getArtikel(search, standort);
-        if (a != null) {
-            if (a.getSn().equals("K")) {
-                search = a.getArtikelnummer();
+        try {
+            //CommunicationCommon. hideKeyboard(requireActivity());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity());
+            String standort = prefs.getString("standort", null);
+            String ipadresse = prefs.getString("ipadresse", "");
+            String port = prefs.getString("port", "");
+            String datenbank = prefs.getString("datenbank", "");
+            String instance = prefs.getString("instance", "");
+            String benutzername = prefs.getString("benutzername", "");
+            String kennwort = prefs.getString("kennwort", "");
+            SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
+
+            Artikel a = CommunicationSql.getArtikel(sqlServerData, search, standort);
+            if (a != null) {
+                if (a.getSn().equals("K")) {
+                    search = a.getArtikelnummer();
+                }
             }
+            queueRecyclerViewAdapter.getFilter().filter(search);
+        } catch (IOError | Exception error) {
+            Intent i = new Intent(getActivity(), MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
         }
-        queueRecyclerViewAdapter.getFilter().filter(search);
     }
 }

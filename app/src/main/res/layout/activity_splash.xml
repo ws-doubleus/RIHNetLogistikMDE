@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:keepScreenOn="true"
-        android:src="@drawable/rihnet_logo"
+        android:src="@drawable/rihnet_logo_path"
         app:tint="@color/white"
         android:contentDescription="@string/splash_description_logo" />
 

@@ -1,7 +1,9 @@
 package at.rihnet.rihnetlogistikmde.models;
 
-public enum LogKategorie {
+public enum Kategorie {
     UMLAGERUNG,
     ARTIKELABBUCHEN,
-    ARTIKELZUBUCHEN
+    ARTIKELZUBUCHEN,
+    FREIERWARENEINGANG,
+    INVENTUR
 }

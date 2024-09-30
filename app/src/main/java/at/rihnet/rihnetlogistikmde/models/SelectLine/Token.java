@@ -1,35 +1,38 @@
 package at.rihnet.rihnetlogistikmde.models.SelectLine;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
     @JsonProperty("AccessToken")
-    private String AccessToken;
+    private String accessToken;
+
     @JsonProperty("TokenType")
-    private String TokenType;
+    private String tokenType;
 
     public Token(){
 
     }
 
     public Token(String accessToken, String tokenType) {
-        this.AccessToken = accessToken;
-        this.TokenType = tokenType;
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
     }
 
     public String getAccessToken() {
-        return AccessToken;
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
-        this.AccessToken = accessToken;
+        this.accessToken = accessToken;
     }
 
     public String getTokenType() {
-        return TokenType;
+        return tokenType;
     }
 
     public void setTokenType(String tokenType) {
-        this.TokenType = tokenType;
+        this.tokenType = tokenType;
     }
 }

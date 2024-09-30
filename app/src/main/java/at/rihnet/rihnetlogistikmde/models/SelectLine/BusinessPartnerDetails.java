@@ -2,17 +2,15 @@ package at.rihnet.rihnetlogistikmde.models.SelectLine;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
-
 public class BusinessPartnerDetails {
     @JsonProperty("Address")
-    private DocumentDetailAddress Address;
+    private DocumentDetailAddress address;
 
     public DocumentDetailAddress getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(DocumentDetailAddress address) {
-        Address = address;
+        this.address = address;
     }
 }

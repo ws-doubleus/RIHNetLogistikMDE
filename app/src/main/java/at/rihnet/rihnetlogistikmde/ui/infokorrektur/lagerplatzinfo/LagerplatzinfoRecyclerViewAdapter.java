@@ -1,6 +1,5 @@
 package at.rihnet.rihnetlogistikmde.ui.infokorrektur.lagerplatzinfo;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,9 @@ import java.util.List;
 
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.models.Lagerplatzinfo;
-import at.rihnet.rihnetlogistikmde.ui.umlagerung.log.LogRecyclerViewAdapter;
 
 public class LagerplatzinfoRecyclerViewAdapter extends RecyclerView.Adapter<LagerplatzinfoRecyclerViewAdapter.LagerplatzinfoHolder> {
-    private static final String TAG = "RIHNet";
+    //private static final String TAG = "RIHNet";
     private List<Lagerplatzinfo> lagerplatzinfoList;
 
     public LagerplatzinfoRecyclerViewAdapter(List<Lagerplatzinfo> lagerplatzinfoList) {

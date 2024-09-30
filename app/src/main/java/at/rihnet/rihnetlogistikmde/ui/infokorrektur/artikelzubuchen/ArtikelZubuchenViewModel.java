@@ -11,7 +11,7 @@ import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Log;
 
 public class ArtikelZubuchenViewModel extends ViewModel {
-    private static final String TAG = "RIHNet";
+    //private static final String TAG = "RIHNet";
     private final MutableLiveData<Artikel> mArtikel;
     private final MutableLiveData<String> mSearchArtikel;
     private final MutableLiveData<String> mSearchLager;

@@ -11,7 +11,7 @@ import java.util.List;
 @Dao
 @Entity(tableName = "queue")
 public class Artikel implements Serializable {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private  Long id;
     private String artikelnummer;
     private String bezeichnung;
@@ -27,11 +27,12 @@ public class Artikel implements Serializable {
     private String hstArtikelnummer;
     private String sn;
     private String eannummer;
+    private Kategorie kategorie;
 
     @Ignore
     private List<LagerplatzBestand> lagerBestandList;
 
-    public Artikel(String artikelnummer, String bezeichnung, String zusatz, String serieCharge, String seriennummer, String charge, int menge, int bestand, String lager, String hstArtikelnummer, String eannummer, String lagerplatz, int lagerplatzId, String sn) {
+    public Artikel(String artikelnummer, String bezeichnung, String zusatz, String serieCharge, String seriennummer, String charge, int menge, int bestand, String lager, String hstArtikelnummer, String eannummer, String lagerplatz, int lagerplatzId, String sn, Kategorie kategorie) {
         this.artikelnummer = artikelnummer;
         this.bezeichnung = bezeichnung;
         this.zusatz = zusatz;
@@ -46,6 +47,7 @@ public class Artikel implements Serializable {
         this.lagerplatz = lagerplatz;
         this.lagerplatzId = lagerplatzId;
         this.sn = sn;
+        this.kategorie = kategorie;
     }
 
     public Long getId() {
@@ -174,5 +176,13 @@ public class Artikel implements Serializable {
 
     public void setLagerBestandList(List<LagerplatzBestand> lagerBestandList) {
         this.lagerBestandList = lagerBestandList;
+    }
+
+    public Kategorie getKategorie() {
+        return kategorie;
+    }
+
+    public void setKategorie(Kategorie kategorie) {
+        this.kategorie = kategorie;
     }
 }

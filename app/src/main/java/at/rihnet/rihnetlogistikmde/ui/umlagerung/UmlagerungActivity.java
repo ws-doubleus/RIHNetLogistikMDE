@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -33,7 +32,6 @@ public class UmlagerungActivity extends AppCompatActivity implements ArtikelFrag
     private BarcodeManager barcodeManager = null;
     private ReadListener readListener = null;
     private BottomNavigationView navView;
-    private UmlagerungViewModel umlagerungViewModel;
     private MenuItem menuItem;
     private SearchView searchView;
 
@@ -44,7 +42,7 @@ public class UmlagerungActivity extends AppCompatActivity implements ArtikelFrag
         at.rihnet.rihnetlogistikmde.databinding.ActivityUmlagerungBinding binding = ActivityUmlagerungBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        umlagerungViewModel = new ViewModelProvider(this).get(UmlagerungViewModel.class);
+        //UmlagerungViewModel umlagerungViewModel = new ViewModelProvider(this).get(UmlagerungViewModel.class);
 
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
@@ -66,7 +64,6 @@ public class UmlagerungActivity extends AppCompatActivity implements ArtikelFrag
     @Override
     protected void onResume() {
         super.onResume();
-        CommunicationSql.connection = null;
         if (barcodeManager == null) {
             barcodeManager = new BarcodeManager();
         }
@@ -83,10 +80,7 @@ public class UmlagerungActivity extends AppCompatActivity implements ArtikelFrag
                             searchView.setQuery(result, true);
                             //umlagerungViewModel.setSearchArtikel(result);
                             break;
-                            //menuItem.expandActionView();
-                            //searchView.setQuery(result, true);
-                            //umlagerungViewModel.setSearchLager(result);
-                            //break;
+
                         case R.id.navigation_queue:
                             menuItem.expandActionView();
                             searchView.setQuery(result, false);
