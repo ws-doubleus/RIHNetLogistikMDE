@@ -86,8 +86,8 @@ public class UmlagerungActivity extends AppCompatActivity implements ArtikelFrag
                             searchView.setQuery(result, false);
                             //umlagerungViewModel.setSearchQueue(result);
                             break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
+                        //default:
+                            //throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
                     }
                 }
             };

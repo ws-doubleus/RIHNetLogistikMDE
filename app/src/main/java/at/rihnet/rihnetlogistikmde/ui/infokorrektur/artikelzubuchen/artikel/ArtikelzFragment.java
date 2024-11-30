@@ -71,9 +71,6 @@ public class ArtikelzFragment extends Fragment implements MenuProvider {
         void onSearchArtikel(MenuItem menuItem, SearchView searchView);
     }
 
-    // S => T404953
-    // C => T410645
-    // O => T410643
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         artikelzViewModel = new ViewModelProvider(this).get(at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.artikel.ArtikelzViewModel.class);
         binding = FragmentArtikelzBinding.inflate(inflater, container, false);

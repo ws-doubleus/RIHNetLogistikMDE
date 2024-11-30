@@ -22,6 +22,9 @@ public interface QueueDAO {
     @Delete
     public void delete(Artikel artikel);
 
-   @Query("SELECT * FROM queue WHERE kategorie = :kategorie")
+    @Query("SELECT * FROM queue WHERE kategorie = :kategorie")
     public List<Artikel> getArtikelByKategorie(Kategorie kategorie);
+
+    @Query("UPDATE queue SET menge = :menge WHERE kategorie = :kategorie AND artikelnummer = :artikelnummer AND lager = :lager AND lagerplatz = :lagerplatz")
+    public void updateArtikelByKategorieArtikelnummerLager(Kategorie kategorie, String artikelnummer, String lager, String lagerplatz, int menge);
 }

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -609,15 +611,16 @@ public class CommunicationSelectLine {
 
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonString = objectMapper.writeValueAsString(inventoryArticleEdit);
-
             RequestBody requestBody = RequestBody.create(jsonString, JSON_MEDIA_TYPE);
+            //Log.e(TAG, "article: " + URLEncoder.encode(article, "UTF-8").replace("%", "~").replace("+", "~20"));
             Request request = new Request.Builder()
-                    .url(BASE_ADDRESS + "Inventories/" + number + "/Warehouses/" + warehouse + "/Articles/" + article)
+                    .url(BASE_ADDRESS + "Inventories/" + number + "/Warehouses/" + warehouse + "/Articles/" + URLEncoder.encode(article, "UTF-8").replace("%", "~").replace("+", "~20"))
                     .addHeader("Accept", "application/json")
                     .addHeader("Authorization", "LoginId " + ACCESS_TOKEN)
                     .put(requestBody)
                     .build();
             try (Response response = client.newCall(request).execute()) {
+                Log.e(TAG, "OK");
                 return response.isSuccessful();
             } catch (Exception ex) {
                 Log.e(TAG, String.format("%s", ex.getMessage()));

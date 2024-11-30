@@ -75,9 +75,9 @@ public class InventurErfassungActivity extends AppCompatActivity implements Arti
                     if (navView.getSelectedItemId() == R.id.navigation_artikel) {
                         menuItem.expandActionView();
                         searchView.setQuery(result, true);
-                    } else {
-                        throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
-                    }
+                    } //else {
+                        //throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
+                    //}
                 }
             };
             barcodeManager.addReadListener(readListener);

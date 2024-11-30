@@ -79,8 +79,8 @@ public class FreierWareneingangActivity extends AppCompatActivity implements Bel
                             menuItem.expandActionView();
                             searchView.setQuery(result, false);
                             break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
+                        //default:
+                            //throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
                     }
                 }
             };

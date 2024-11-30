@@ -270,6 +270,8 @@ public class QueuefFragment extends Fragment implements MenuProvider {
                             try {
                                 Artikel a = list.get(i);
                                 ArticlePositionItem articlePositionItem = getArticlePositionItem(a);
+                                android.util.Log.i(TAG, "a.getSeriennummer(): " + a.getSeriennummer());
+                                android.util.Log.i(TAG, "a.getLagerplatzId(): " + a.getLagerplatzId());
                                 DocumentPositionCreated documentPositionCreated = CommunicationSelectLine.createDocumentPositionWithArticleItemByDocumentKey(documentCreated.getDocumentKey(), articlePositionItem);
                                 if (documentPositionCreated != null && !documentPositionCreated.getPositionIdentifier().isEmpty()) {
                                     success++;

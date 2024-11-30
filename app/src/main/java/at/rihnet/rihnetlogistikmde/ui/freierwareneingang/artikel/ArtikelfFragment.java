@@ -284,8 +284,22 @@ public class ArtikelfFragment extends Fragment implements MenuProvider {
             artikel.setLagerplatz(acs_lagerplatz.getSelectedItem().toString());
             artikel.setLagerplatzId(((Lagerplatz) acs_lagerplatz.getSelectedItem()).getLagerplatzId());
             artikel.setSeriennummer(et_seriennummercharge.getText().toString());
-            freierWareneingangViewModel.addQueue(artikel);
-            queueDAO.insert(artikel);
+
+            List<Artikel> artikels =  freierWareneingangViewModel.getQueue().getValue();
+            assert artikels != null;
+            Optional<Artikel> gefundenerArtikel = artikels.stream()
+                    .filter(a -> a.getArtikelnummer().equals(artikel.getArtikelnummer())
+                            && a.getLager().equals(artikel.getLager())
+                            && a.getLagerplatz().equals(artikel.getLagerplatz()))
+                    .findFirst();
+            if (gefundenerArtikel.isPresent()) {
+                Artikel art = gefundenerArtikel.get();
+                art.setMenge(art.getMenge() + artikel.getMenge());
+                queueDAO.updateArtikelByKategorieArtikelnummerLager(Kategorie.FREIERWARENEINGANG, art.getArtikelnummer(), art.getLager(), art.getLagerplatz(), art.getMenge());
+            } else {
+                queueDAO.insert(artikel);
+            }
+            freierWareneingangViewModel.addQueue1(artikel);
 
             et_menge.setEnabled(true);
             btn_add.setEnabled(true);
@@ -295,7 +309,7 @@ public class ArtikelfFragment extends Fragment implements MenuProvider {
 
         artikelViewModel.getArtikel().observe(getViewLifecycleOwner(), artikel -> {
             this.artikel = artikel;
-            if (artikel != null && artikel.getBestand() > 0) {
+            if (artikel != null) {
                 if (artikel.getArtikelnummer().equals(("Error"))) {
                     return;
                 }
@@ -319,12 +333,8 @@ public class ArtikelfFragment extends Fragment implements MenuProvider {
                 }
                 setBtnWeiterEnabled();
             } else {
-                if (artikel == null) {
-                    Toast.makeText(getContext(), "Artikelnummer: " + freierWareneingangViewModel.getSearchArtikel().getValue() + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
-                    artikelViewModel.resetArtikel();
-                } else {
-                    Toast.makeText(getContext(), "Artikelnummer: " + freierWareneingangViewModel.getSearchArtikel().getValue() + " | Bestand: 0 | Artikel kann nicht umgelagert werden!", Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(getContext(), "Artikelnummer: " + freierWareneingangViewModel.getSearchArtikel().getValue() + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
+                artikelViewModel.resetArtikel();
                 et_menge.setText("1");
                 tv_artikelnummer.setText("");
                 tv_bezeichnung.setText("");
@@ -475,7 +485,7 @@ public class ArtikelfFragment extends Fragment implements MenuProvider {
                 String kennwort = prefs.getString("kennwort", "");
                 SqlServerData sqlServerData = new SqlServerData(ipadresse, port, datenbank, instance, benutzername, kennwort);
 
-                return CommunicationSql.getArtikel(sqlServerData, s, standort);
+                return CommunicationSql.getArtikelWE(sqlServerData, s, standort);
             } catch (IOError | Exception error) {
                 return new Artikel("Error", "", "", "", "", "", 0, 0, "", "", "", "", 0, "", Kategorie.UMLAGERUNG);
             }

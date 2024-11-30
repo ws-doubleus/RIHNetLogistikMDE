@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -40,6 +41,8 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.io.IOError;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import at.rihnet.rihnetlogistikmde.AsyncTaskExecutorService;
 import at.rihnet.rihnetlogistikmde.CommunicationCommon;
@@ -80,6 +83,7 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
     private Inventory inventory;
     private LogDAO logDAO;
     private SharedPreferences prefs;
+    private MediaPlayer mediaPlayer;
 
     public interface OnSearchArtikel {
         void onSearchArtikel(MenuItem menuItem, SearchView searchView);
@@ -168,6 +172,7 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
                 }
                 setBtnErfassenEnabled();
             } else {
+                playErrorSound();
                 Toast.makeText(getContext(), "Artikelnummer: " + inventurErfassungViewModel.getSearchArtikel().getValue() + " wurde nicht gefunden!", Toast.LENGTH_LONG).show();
                 artikelViewModel.resetArtikel();
                 et_menge.setText("1");
@@ -290,10 +295,12 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
                 et_menge.setEnabled(false);
                 btn_add.setEnabled(false);
                 btn_add.setImageAlpha(50);
+                acs_lager.setEnabled(false);
             } else {
                 et_menge.setEnabled(true);
                 btn_add.setEnabled(true);
                 btn_add.setImageAlpha(255);
+                acs_lager.setEnabled(true);
             }
         });
 
@@ -365,11 +372,16 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
     private void doSearch(String search) {
         CommunicationCommon.hideKeyboard(requireActivity());
         if (search != null && !search.isEmpty()) {
-            loadingDialogFragment.show(getChildFragmentManager(), "fragment_loading_dialog");
-            new Handler().postDelayed(() -> {
+            if (chk_automode.isChecked()) {
                 LoadArtikelAsyncTask loadArtikelAsyncTask = new LoadArtikelAsyncTask();
                 loadArtikelAsyncTask.execute(search);
-            }, 300);
+            } else {
+                loadingDialogFragment.show(getChildFragmentManager(), "fragment_loading_dialog");
+                new Handler().postDelayed(() -> {
+                    LoadArtikelAsyncTask loadArtikelAsyncTask = new LoadArtikelAsyncTask();
+                    loadArtikelAsyncTask.execute(search);
+                }, 300);
+            }
         }
     }
 
@@ -380,7 +392,6 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
         String password = prefs.getString("password", "");
         Artikel artikel = artikelViewModel.getArtikel().getValue();
         if (artikel != null) {
-            Log.e(TAG, "artikel.getArtikelnummer(): " + artikel.getArtikelnummer());
             try {
                 if (inventory.getKindFlag() == 1 || inventory.getKindFlag() == 3) {
                     List<Invbasis> invbasisList = CommunicationSql.getInvbasisByBelegnummerKennzeichen(sqlServerData, inventory.getNumber(), "A");
@@ -422,16 +433,21 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
                             }*/
 
                     at.rihnet.rihnetlogistikmde.models.Log log;
-                    //Log.e(TAG, "acs_lager.getSelectedItem(): " + acs_lager.getSelectedItem().getClass());
                     if (CommunicationSelectLine.updateInventoryRaiseArticleQuantity(inventory.getNumber(), acs_lager.getSelectedItem().toString(), artikel.getArtikelnummer(), inventoryArticleEdit)) {
                         log = new at.rihnet.rihnetlogistikmde.models.Log("Belegnummer: " + inventory.getNumber() + "\nArtikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + et_menge.getText().toString() + "\nInventur-Erfassung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.INVENTUR);
-                        Toast.makeText(getContext(), "Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + et_menge.getText().toString() + "\nInventur-Erfassung erfolgreich!", Toast.LENGTH_LONG).show();
+                        if (!chk_automode.isChecked()) {
+                            Toast.makeText(getContext(), "Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + et_menge.getText().toString() + "\nInventur-Erfassung erfolgreich!", Toast.LENGTH_LONG).show();
+                        }
                     } else {
+                        playErrorSound();
                         log = new at.rihnet.rihnetlogistikmde.models.Log("Belegnummer: " + inventory.getNumber() + "\nArtikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + et_menge.getText().toString() + "\nInventur-Erfassung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.INVENTUR);
                         Toast.makeText(getContext(), "Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + et_menge.getText().toString() + "\nInventur-Erfassung fehlerhaft!", Toast.LENGTH_LONG).show();
                     }
                     inventurErfassungViewModel.addLog(log);
-                    logDAO.insert(log);
+
+                    Executor executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() -> logDAO.insert(log));
+
                     artikelViewModel.resetArtikel();
                 } else {
                     android.util.Log.e(TAG, "Anmeldung war nicht erfolgreich!");
@@ -439,6 +455,19 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void playErrorSound() {
+        mediaPlayer = MediaPlayer.create(requireActivity(), R.raw.error);
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mediaPlayer.release();
+                }
+            });
         }
     }
 
@@ -499,17 +528,19 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
                     startActivity(i);
                     return;
                 }
-                if (artikel.getSerieCharge().equals("S")) {
+                if (artikel.getSerieCharge().equals("S") || chk_automode.isChecked()) {
                     artikel.setMenge(1);
                     et_menge.setText("1");
                     et_menge.setEnabled(false);
                     btn_add.setEnabled(false);
                     btn_add.setImageAlpha(50);
+                    acs_lager.setEnabled(false);
                 } else {
                     artikel.setMenge(Integer.parseInt(et_menge.getText().toString()));
                     et_menge.setEnabled(true);
                     btn_add.setEnabled(true);
                     btn_add.setImageAlpha(255);
+                    acs_lager.setEnabled(true);
                 }
                 setSeriennummerChargeViewVisibility(View.VISIBLE);
             }
@@ -524,10 +555,12 @@ public class ArtikeliFragment extends Fragment implements MenuProvider {
                         doErfassen();
                     }
                 }
+            } else {
+                if (loadingDialogFragment != null) {
+                    loadingDialogFragment.dismiss();
+                }
             }
-            if (loadingDialogFragment != null) {
-                loadingDialogFragment.dismiss();
-            }
+
         }
     }
 }

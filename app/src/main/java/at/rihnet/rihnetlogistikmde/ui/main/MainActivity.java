@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton btn_infokorrektur;
     private MaterialButton btn_freierwareneingang;
     private MaterialButton btn_inventur;
-    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

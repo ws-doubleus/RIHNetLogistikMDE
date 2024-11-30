@@ -19,6 +19,8 @@ import androidx.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import at.rihnet.rihnetlogistikmde.databinding.FragmentLogBinding;
 import at.rihnet.rihnetlogistikmde.models.Kategorie;
@@ -46,7 +48,6 @@ public class LogFragment extends Fragment {
 
         InventurErfassungViewModel inventurErfassungViewModel = new ViewModelProvider(requireActivity()).get(InventurErfassungViewModel.class);
         inventurErfassungViewModel.getLog().observe(getViewLifecycleOwner(), l -> {
-            android.util.Log.e(TAG, "l:" + l.size());
             logList = l;
             logRecyclerViewAdapter.setLogs(l);
             logRecyclerViewAdapter.notifyDataSetChanged();
@@ -64,7 +65,14 @@ public class LogFragment extends Fragment {
 
         btn_delete.setOnClickListener(v -> {
             logList.clear();
-            logDAO.deleteLogByKategorie(Kategorie.INVENTUR);
+            //logDAO.deleteLogByKategorie(Kategorie.INVENTUR);
+            Executor executor = Executors.newSingleThreadExecutor();
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    logDAO.deleteLogByKategorie(Kategorie.INVENTUR);
+                }
+            });
             inventurErfassungViewModel.setLog(logList);
         });
 
@@ -84,7 +92,13 @@ public class LogFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Log log = logRecyclerViewAdapter.getLogAt(viewHolder.getAdapterPosition());
                 logList.remove(log);
-                logDAO.delete(log);
+                Executor executor = Executors.newSingleThreadExecutor();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        logDAO.delete(log);
+                    }
+                });
                 inventurErfassungViewModel.setLog(logList);
                 //logRecyclerViewAdapter.notifyDataSetChanged();
             }
@@ -100,10 +114,29 @@ public class LogFragment extends Fragment {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().build();
         logDAO = myDatabase.getLogDAO();
-        logList.addAll(logDAO.getLogByKategorie(Kategorie.INVENTUR));
-        inventurErfassungViewModel.setLog(logList);
+
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+              List<Log> logs = logDAO.getLogByKategorie(Kategorie.INVENTUR);
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Beispiel: Update des UI (z.B. RecyclerView oder TextView)
+                        logList.clear();
+                        logList.addAll(logs);
+                        inventurErfassungViewModel.setLog(logList);
+                    }
+                });
+            }
+        });
+
+
+        //logList.addAll(logDAO.getLogByKategorie(Kategorie.INVENTUR));
+        //inventurErfassungViewModel.setLog(logList);
 
         return binding.getRoot();
     }
