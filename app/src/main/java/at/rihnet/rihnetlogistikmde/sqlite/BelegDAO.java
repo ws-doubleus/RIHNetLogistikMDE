@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import at.rihnet.rihnetlogistikmde.models.Beleg;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 
 @Dao
 public interface BelegDAO {
@@ -19,9 +20,12 @@ public interface BelegDAO {
     @Delete
     void delete(Beleg... beleg);
 
-    @Query("SELECT * FROM beleg LIMIT 1")
-    Beleg getBeleg();
+    @Query("SELECT * FROM beleg WHERE kategorie = :kategorie LIMIT 1")
+    Beleg getBeleg(Kategorie kategorie);
 
     @Query("DELETE FROM beleg")
     void deleteAllBeleg();
+
+    @Query("DELETE FROM beleg WHERE kategorie = :kategorie")
+    void deleteBelegByKategorie(Kategorie kategorie);
 }

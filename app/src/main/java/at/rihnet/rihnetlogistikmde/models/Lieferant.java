@@ -2,7 +2,9 @@ package at.rihnet.rihnetlogistikmde.models;
 
 import androidx.annotation.NonNull;
 
-public class Lieferant {
+import java.io.Serializable;
+
+public class Lieferant implements Serializable {
     private String nummer;
     private String anzeigename;
 

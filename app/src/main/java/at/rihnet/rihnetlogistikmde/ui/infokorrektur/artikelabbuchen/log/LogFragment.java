@@ -2,6 +2,8 @@ package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.log;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +17,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import at.rihnet.rihnetlogistikmde.databinding.FragmentLogBinding;
 import at.rihnet.rihnetlogistikmde.models.Kategorie;
@@ -33,6 +36,7 @@ public class LogFragment extends Fragment {
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
     private List<Log> logList = new ArrayList<>();
     private LogDAO logDAO;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -63,7 +67,7 @@ public class LogFragment extends Fragment {
         btn_delete.setOnClickListener(v -> {
             logList.clear();
             artikelAbbuchenViewModel.setLog(logList);
-            logDAO.deleteLogByKategorie(Kategorie.ARTIKELABBUCHEN);
+            executor.execute(() -> logDAO.deleteLogByKategorie(Kategorie.ARTIKELABBUCHEN));
         });
 
         logRecyclerViewAdapter = new LogRecyclerViewAdapter(logList);
@@ -83,7 +87,7 @@ public class LogFragment extends Fragment {
                 Log log = logRecyclerViewAdapter.getLogAt(viewHolder.getAdapterPosition());
                 logList.remove(log);
                 artikelAbbuchenViewModel.setLog(logList);
-                logDAO.delete(log);
+                executor.execute(() -> logDAO.delete(log));
             }
         }).attachToRecyclerView(binding.rvLog);
 
@@ -97,10 +101,18 @@ public class LogFragment extends Fragment {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        //MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        MyDatabase myDatabase = MyDatabase.getInstance(requireContext());
         logDAO = myDatabase.getLogDAO();
-        logList.addAll(logDAO.getLogByKategorie(Kategorie.ARTIKELABBUCHEN));
-        artikelAbbuchenViewModel.setLog(logList);
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            List<Log> logs = logDAO.getLogByKategorie(Kategorie.ARTIKELABBUCHEN);
+            handler.post(() -> {
+                logList.clear();
+                logList.addAll(logs);
+                artikelAbbuchenViewModel.setLog(logList);
+            });
+        });
 
         return binding.getRoot();
     }

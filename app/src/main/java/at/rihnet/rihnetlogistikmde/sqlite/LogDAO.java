@@ -14,17 +14,17 @@ import at.rihnet.rihnetlogistikmde.models.Kategorie;
 @Dao
 public interface LogDAO {
     @Insert
-    public void insert(Log... log);
+    void insert(Log... log);
 
     @Update
-    public void update(Log... log);
+    void update(Log... log);
 
     @Delete
-    public void delete(Log log);
+    void delete(Log log);
 
     @Query("DELETE FROM log WHERE kategorie = :kategorie")
-    public void deleteLogByKategorie(Kategorie kategorie);
+    void deleteLogByKategorie(Kategorie kategorie);
 
     @Query("SELECT * FROM log WHERE kategorie = :kategorie")
-    public List<Log> getLogByKategorie(Kategorie kategorie);
+    List<Log> getLogByKategorie(Kategorie kategorie);
 }

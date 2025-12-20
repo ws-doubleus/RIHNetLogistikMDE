@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import at.rihnet.rihnetlogistikmde.CommunicationCommon;
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
-import at.rihnet.rihnetlogistikmde.databinding.FragmentLagerBinding;
+import at.rihnet.rihnetlogistikmde.databinding.FragmentUmlagerungLagerBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
@@ -48,7 +48,7 @@ import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
 
 public class LagerFragment extends Fragment implements MenuProvider {
     //private static final String TAG = "RIHNet";
-    private FragmentLagerBinding binding;
+    private FragmentUmlagerungLagerBinding binding;
     private OnChangeTab changeTab;
     private OnSearchLager searchLager;
     private UmlagerungViewModel umlagerungViewModel;
@@ -72,7 +72,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentLagerBinding.inflate(inflater, container, false);
+        binding = FragmentUmlagerungLagerBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         umlagerungViewModel = new ViewModelProvider(requireActivity()).get(UmlagerungViewModel.class);
@@ -205,7 +205,8 @@ public class LagerFragment extends Fragment implements MenuProvider {
 
         umlagerungViewModel.getSearchLager().observe(getViewLifecycleOwner(), this::doSearch);
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        //MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        MyDatabase myDatabase = MyDatabase.getInstance(requireContext());
         queueDAO = myDatabase.getQueueDAO();
 
         return root;

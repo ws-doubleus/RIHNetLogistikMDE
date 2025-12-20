@@ -1,77 +1,171 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/preferenceCategory_sql">
+    <SwitchPreference
+        android:key="dark_mode"
+        android:title="Dark Mode"
+        android:defaultValue="false" />
+
+    <PreferenceCategory android:title="@string/preferenceCategory_allgemein">
 
         <EditTextPreference
-            app:key="ipadresse"
-            app:title="@string/preference_ipadresse"
+            android:key="standort"
+            android:title="@string/preference_standort"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="port"
-            app:title="@string/preference_port"
+            android:key="druckplatz"
+            android:title="@string/preference_druckplatz"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferenceCategory_sql">
+
+        <EditTextPreference
+            android:key="ipadresse"
+            android:title="@string/preference_ipadresse"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="datenbank"
-            app:title="@string/preference_datenbank"
+            android:key="port"
+            android:title="@string/preference_port"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="instance"
-            app:title="@string/preference_instance"
+            android:key="datenbank"
+            android:title="@string/preference_datenbank"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="benutzername"
-            app:title="@string/preference_benutzername"
+            android:key="instance"
+            android:title="@string/preference_instance"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="kennwort"
-            app:title="@string/preference_kennwort"
+            android:key="benutzername"
+            android:title="@string/preference_benutzername"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="kennwort"
+            android:title="@string/preference_kennwort"
             android:inputType="textPassword"
             app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/preferenceCategory_selectLineApi">
+    <PreferenceCategory android:title="@string/preferenceCategory_selectLineApi">
 
         <EditTextPreference
-            app:key="appkey"
-            app:title="@string/preference_appkey"
+            android:key="appkey"
+            android:title="@string/preference_appkey"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="baseaddress"
-            app:title="@string/preference_baseaddress"
+            android:key="baseaddress"
+            android:title="@string/preference_baseaddress"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="username"
-            app:title="@string/preference_username"
+            android:key="username"
+            android:title="@string/preference_username"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="password"
-            app:title="@string/preference_password"
+            android:key="password"
+            android:title="@string/preference_password"
             android:inputType="textPassword"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/preferenceCategory_umlagerung">
+    <PreferenceCategory android:title="@string/preferenceCategory_druckvorlagen">
 
         <EditTextPreference
-            app:key="standort"
-            app:title="@string/preference_standort"
+            android:key="lieferschein"
+            android:title="@string/preference_lieferschein"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:key="adressnummer"
-            app:title="@string/preference_adressnummer"
+            android:key="rechnung"
+            android:title="@string/preference_rechnung"
             app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferenceCategory_warenausgang">
+
+        <MultiSelectListPreference
+            android:key="belegtyp"
+            android:title="@string/preference_belegtypen"
+            android:dialogTitle="@string/preference_belegtypen"
+            android:entries="@array/pref_warenausgang_belegtypen"
+            android:entryValues="@array/pref_warenausgang_belegtypen"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+            android:key="sortierung"
+            android:title="@string/preference_sortierung"
+            android:dialogTitle="@string/preference_sortierung"
+            android:entries="@array/pref_warenausgang_sortierung"
+            android:entryValues="@array/pref_warenausgang_sortierung"
+            android:defaultValue="Artikelnummer"
+            app:useSimpleSummaryProvider="true"/>
+
+        <ListPreference
+            android:key="druckausgabe"
+            android:title="@string/preference_druckausgabe"
+            android:dialogTitle="@string/preference_druckausgabe"
+            android:entries="@array/pref_warenausgang_druckausgabe"
+            android:entryValues="@array/pref_warenausgang_druckausgabe"
+            android:defaultValue="Drucker"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreference
+            android:key="belegeverarbeiten"
+            android:title="@string/preference_belege_verarbeiten"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreference
+            android:key="paketanbindung"
+            android:title="@string/preference_paketanbindung"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreference
+            android:key="autoworker"
+            android:title="@string/preference_autoworker"
+            app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferenceCategory_wareneingangbestellbezug">
+
+        <SwitchPreference
+            android:key="allebelege"
+            android:title="@string/preference_wareneingangbestellbezug"
+            app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferenceCategory_umlagerung">
+
+        <EditTextPreference
+            android:key="adressnummer"
+            android:title="@string/preference_adressnummer"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferenceCategory_paketlabel">
+
+        <MultiSelectListPreference
+            android:key="paketlabel_belegtyp"
+            android:title="@string/preference_belegtypen"
+            android:dialogTitle="@string/preference_belegtypen"
+            android:entries="@array/pref_warenausgang_belegtypen"
+            android:entryValues="@array/pref_warenausgang_belegtypen"
+            app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
 

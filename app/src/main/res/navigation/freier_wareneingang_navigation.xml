@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/freierwareneingang_navigation"
+    app:startDestination="@+id/navigation_beleg">
+
+    <fragment
+        android:id="@+id/navigation_beleg"
+        android:name="at.rihnet.rihnetlogistikmde.ui.wareneingang.freierwareneingang.beleg.BelegFragment"
+        android:label="@string/title_beleg"
+        tools:layout="@layout/fragment_freier_wareneingang_beleg" />
+
+    <fragment
+        android:id="@+id/navigation_artikel"
+        android:name="at.rihnet.rihnetlogistikmde.ui.wareneingang.freierwareneingang.artikel.ArtikelFragment"
+        android:label="@string/title_artikel"
+        tools:layout="@layout/fragment_umlagerung_artikel" />
+
+    <fragment
+        android:id="@+id/navigation_queue"
+        android:name="at.rihnet.rihnetlogistikmde.ui.wareneingang.freierwareneingang.queue.QueueFragment"
+        android:label="@string/title_queue"
+        tools:layout="@layout/fragment_umlagerung_queue" />
+
+    <fragment
+        android:id="@+id/navigation_log"
+        android:name="at.rihnet.rihnetlogistikmde.ui.wareneingang.freierwareneingang.log.LogFragment"
+        android:label="@string/title_log"
+        tools:layout="@layout/fragment_log" />
+</navigation>

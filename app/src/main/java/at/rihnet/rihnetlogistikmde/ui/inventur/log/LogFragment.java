@@ -114,23 +114,49 @@ public class LogFragment extends Fragment {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().build();
+        //MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().build();
+        MyDatabase myDatabase = MyDatabase.getInstance(requireContext());
         logDAO = myDatabase.getLogDAO();
+
+//        Executor executor = Executors.newSingleThreadExecutor();
+//        executor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//              List<Log> logs = logDAO.getLogByKategorie(Kategorie.INVENTUR);
+//                requireActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        // Beispiel: Update des UI (z.B. RecyclerView oder TextView)
+//                        logList.clear();
+//                        logList.addAll(logs);
+//                        inventurErfassungViewModel.setLog(logList);
+//                    }
+//                });
+//            }
+//        });
 
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             @Override
             public void run() {
-              List<Log> logs = logDAO.getLogByKategorie(Kategorie.INVENTUR);
-                requireActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Beispiel: Update des UI (z.B. RecyclerView oder TextView)
-                        logList.clear();
-                        logList.addAll(logs);
-                        inventurErfassungViewModel.setLog(logList);
-                    }
-                });
+                List<Log> logs = logDAO.getLogByKategorie(Kategorie.INVENTUR);
+
+                // 1. Sicherheitscheck: Existiert das Fragment noch?
+                if (isAdded() && getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            logList.clear();
+
+                            // 2. Sicherheitscheck: Gab die DB null zurück?
+                            if (logs != null) {
+                                logList.addAll(logs);
+                            }
+
+                            inventurErfassungViewModel.setLog(logList);
+                        }
+                    });
+                }
             }
         });
 

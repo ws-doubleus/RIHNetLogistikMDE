@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import at.rihnet.rihnetlogistikmde.models.Artikel;
+import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.Log;
 
 public class ArtikelZubuchenViewModel extends ViewModel {
@@ -17,6 +20,7 @@ public class ArtikelZubuchenViewModel extends ViewModel {
     private final MutableLiveData<String> mSearchLager;
     private final MutableLiveData<Boolean> mResetArtikel;
     private final MutableLiveData<List<Log>> mLogList;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public ArtikelZubuchenViewModel() {
         mArtikel = new MutableLiveData<>();
@@ -27,12 +31,29 @@ public class ArtikelZubuchenViewModel extends ViewModel {
         mLogList.setValue(new ArrayList<>());
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executorService.shutdownNow();
+    }
+
+    public ExecutorService getExecutorService() {
+        if (executorService.isShutdown() || executorService.isTerminated()) {
+            executorService = Executors.newSingleThreadExecutor();   // Pool neu starten
+        }
+        return executorService;
+    }
+
     public LiveData<Artikel> getArtikel() {
         return mArtikel;
     }
 
     public void setArtikel(Artikel artikel) {
         mArtikel.setValue(artikel);
+    }
+
+    public void resetArtikel() {
+        mArtikel.setValue(new Artikel("", "", "", "", "", "", 1, 1, "", "", "","", 0, "", Kategorie.ARTIKELZUBUCHEN));
     }
 
     public LiveData<String> getSearchArtikel() {

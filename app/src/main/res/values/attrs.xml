@@ -1,6 +1,18 @@
 <resources>
+
+    <!-- GLOBAL theme attrs (WICHTIG: NICHT in declare-styleable!) -->
+    <attr name="colorPrimary" format="color" />
+    <attr name="colorPrimaryContainer" format="color" />
+
+    <attr name="colorCustomColor1" format="color" />
+    <attr name="colorOnCustomColor1" format="color" />
+    <attr name="colorCustomColor1Container" format="color" />
+    <attr name="colorOnCustomColor1Container" format="color" />
+
+    <!-- Nur das, was wirklich zu FullscreenAttrs gehört, bleibt im styleable -->
     <declare-styleable name="FullscreenAttrs">
-        <attr name="fullscreenBackgroundColor" format="color" />
-        <attr name="fullscreenTextColor" format="color" />
+        <attr name="fullscreenBackgroundColor" format="color"/>
+        <attr name="fullscreenTextColor" format="color"/>
     </declare-styleable>
+
 </resources>

@@ -2,7 +2,9 @@ package at.rihnet.rihnetlogistikmde.models;
 
 import androidx.annotation.NonNull;
 
-public class Lagerplatz {
+import java.io.Serializable;
+
+public class Lagerplatz implements Serializable {
     private String lager0;
     private int lagerplatzId;
     private String bezeichnung;

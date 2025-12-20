@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Enabled state -->
+    <item android:color="?attr/colorPrimary" android:state_enabled="true" />
+    <!-- Disabled state: uses colorOnSurface with 38% alpha, the standard for disabled content -->
+    <item android:alpha="0.38" android:color="?attr/colorOnSurface" android:state_enabled="false" />
+    <!-- Default state -->
+    <item android:color="?attr/colorPrimary" />
+</selector>

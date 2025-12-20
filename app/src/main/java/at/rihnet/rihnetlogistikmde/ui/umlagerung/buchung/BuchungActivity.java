@@ -38,7 +38,7 @@ import at.rihnet.rihnetlogistikmde.CommunicationCommon;
 import at.rihnet.rihnetlogistikmde.CommunicationSelectLine;
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
-import at.rihnet.rihnetlogistikmde.databinding.ActivityBuchungBinding;
+import at.rihnet.rihnetlogistikmde.databinding.ActivityUmlagerungBuchungBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Lagerplatz;
 import at.rihnet.rihnetlogistikmde.models.LagerplatzBestand;
@@ -71,7 +71,7 @@ public class BuchungActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityBuchungBinding binding = ActivityBuchungBinding.inflate(getLayoutInflater());
+        ActivityUmlagerungBuchungBinding binding = ActivityUmlagerungBuchungBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         try {
             buchungViewModel = new ViewModelProvider(this).get(BuchungViewModel.class);

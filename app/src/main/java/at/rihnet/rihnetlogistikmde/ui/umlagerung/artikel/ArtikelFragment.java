@@ -43,7 +43,7 @@ import at.rihnet.rihnetlogistikmde.AsyncTaskExecutorService;
 import at.rihnet.rihnetlogistikmde.CommunicationCommon;
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
-import at.rihnet.rihnetlogistikmde.databinding.FragmentArtikelBinding;
+import at.rihnet.rihnetlogistikmde.databinding.FragmentUmlagerungArtikelBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Kategorie;
 import at.rihnet.rihnetlogistikmde.models.SqlServerData;
@@ -54,7 +54,7 @@ import at.rihnet.rihnetlogistikmde.ui.umlagerung.UmlagerungViewModel;
 public class ArtikelFragment extends Fragment implements MenuProvider {
     //private static final String TAG = "RIHNet";
     private LoadingDialogFragment loadingDialogFragment;
-    private FragmentArtikelBinding binding;
+    private FragmentUmlagerungArtikelBinding binding;
     private OnChangeTab changeTab;
     private OnSearchArtikel searchArtikel;
     private ArtikelViewModel artikelViewModel;
@@ -79,7 +79,7 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         artikelViewModel = new ViewModelProvider(this).get(ArtikelViewModel.class);
-        binding = FragmentArtikelBinding.inflate(inflater, container, false);
+        binding = FragmentUmlagerungArtikelBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         loadingDialogFragment = LoadingDialogFragment.newInstance("Artikel wird geladen...");

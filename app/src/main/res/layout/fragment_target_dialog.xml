@@ -89,7 +89,7 @@
             android:layout_weight="1"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="?attr/colorAccent"
+            android:textColor="?attr/colorPrimary"
             tools:ignore="DuplicateSpeakableTextCheck"
             app:layout_constraintStart_toEndOf="@+id/btn_remove"
             app:layout_constraintEnd_toStartOf="@+id/btn_add"

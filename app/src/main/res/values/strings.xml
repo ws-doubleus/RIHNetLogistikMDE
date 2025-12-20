@@ -2,15 +2,21 @@
     <string name="app_name">RIHNet Logistik</string>
 
     <string name="title_warenausgang">Warenausgang</string>
+    <string name="title_pakete">Pakete</string>
+    <string name="title_wareneingang">Wareneingang</string>
     <string name="title_freierwareneingang">Freier Wareneingang</string>
+    <string name="title_wareneingangbestellbezug">Wareneingang mit Bestellbezug</string>
     <string name="title_umlagerung">Umlagerung</string>
     <string name="title_inventur">Inventur</string>
+    <string name="title_paketlabel">Paketlabel</string>
     <string name="title_inventur_erfassung">Inventur-Erfassung</string>
     <string name="title_verbindungen_testen">Verbindungen testen</string>
     <string name="title_artikelinfo">Artikelinfo</string>
     <string name="title_infokorrektur">Info &amp; Korrektur</string>
-    <string name="title_info">Info</string>
+    <string name="title_info">INFO</string>
     <string name="title_ziellager">Ziellager</string>
+    <string name="title_zur_queue_hinzufuegen">ZUR QUEUE HINZUFÜGEN</string>
+    <string name="title_zu_gebucht_hinzufuegen">ZU GEBUCHT HINZUFÜGEN</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_seriennummer">Seriennummer</string>
     <string name="title_login">Login</string>
@@ -18,9 +24,13 @@
     <string name="title_umlagern">Umlagern</string>
     <string name="title_artikel">ARTIKEL</string>
     <string name="title_lager">LAGER</string>
+    <string name="title_leistungen">LEISTUNGEN</string>
     <string name="title_beleg">BELEG</string>
     <string name="title_queue">QUEUE</string>
     <string name="title_log">LOG</string>
+    <string name="title_offen">OFFEN</string>
+    <string name="title_artikel_buchen">ARTIKEL BUCHEN</string>
+    <string name="title_gebucht">GEBUCHT</string>
     <string name="title_lagerplatzinfo">Lagerplatzinfo</string>
     <string name="title_lagerplatzinfo2">Lagerplatz Info</string>
     <string name="title_artikelzubuchen">Artikel zubuchen</string>
@@ -29,6 +39,10 @@
     <!-- Preferences -->
     <string name="preferenceCategory_mitarbeiter">Mitarbeiter</string>
     <string name="preference_mitarbeiternummer">Nummer</string>
+
+    <string name="preferenceCategory_allgemein">Allgemein</string>
+    <string name="preference_standort">Standort</string>
+    <string name="preference_druckplatz">Druckplatz</string>
 
     <string name="preferenceCategory_sql">SQL</string>
     <string name="preference_ipadresse">IP-Adresse</string>
@@ -44,9 +58,27 @@
     <string name="preference_username">UserName</string>
     <string name="preference_password">Password</string>
 
+    <string name="preferenceCategory_druckvorlagen">Druckvorlagen</string>
+    <string name="preference_lieferschein">Lieferschein</string>
+    <string name="preference_rechnung">Rechnung</string>
+
+    <string name="preferenceCategory_warenausgang">Warenausgang</string>
+    <string name="preference_belegtypen">Belegtypen</string>
+    <string name="preference_sortierung">Sortierung</string>
+    <string name="preference_druckausgabe">Druckausgabe</string>
+    <string name="preference_belege_verarbeiten">nur komplette Belege verarbeiten</string>
+    <string name="preference_paketanbindung">Paketanbindung</string>
+    <string name="preference_paketanbindung_summary">Tabelle [XPaketanbindung] erforderlich</string>
+    <string name="preference_autoworker">RIHNet-AutoWorker</string>
+
+    <string name="preferenceCategory_wareneingangbestellbezug">Wareneingang mit Bestellbezug</string>
+    <string name="preference_wareneingangbestellbezug">alle Bestellungen des Lieferanten verarbeiten</string>
+
     <string name="preferenceCategory_umlagerung">Umlagerung</string>
-    <string name="preference_standort">Standort</string>
     <string name="preference_adressnummer">Adressnummer</string>
+
+    <string name="preferenceCategory_paketlabel">Paketlabel</string>
+    <string name="preference_paketlabel_belegtypen">Belegtypen</string>
 
     <!-- Menu -->
     <string name="menu_einstellungen">Einstellungen</string>
@@ -59,9 +91,14 @@
     <string name="btn_weiter">WEITER</string>
     <string name="btn_queue">ZUR QUEUE HINZUFÜGEN</string>
     <string name="btn_wareneingang">WARENEINGANG ANLEGEN</string>
+    <string name="btn_beleg_verarbeiten">VERARBEITEN</string>
+    <string name="btn_pakete">PAKETE %1$d</string>
+    <string name="btn_paket">PAKET %1$d</string>
+    <string name="btn_verwalten">PAKETE</string>
     <string name="btn_hinzufuegen">HINZUFÜGEN</string>
     <string name="btn_testen">TESTEN</string>
     <string name="btn_erfassen">ERFASSEN</string>
+    <string name="btn_drucken">DRUCKEN</string>
     <string name="btn_buchen">BUCHEN</string>
     <string name="btn_reset">RESET</string>
     <string name="btn_print">DRUCKEN</string>
@@ -71,6 +108,7 @@
     <string name="btn_ok">OK</string>
     <string name="btn_beenden">BEENDEN</string>
     <string name="btn_umlagern">UMLAGERN</string>
+    <string name="btn_foto">FOTO</string>
 
     <!-- RadioButton -->
     <string name="rb_sqlserver">SQL-Server</string>
@@ -95,31 +133,82 @@
 
     <!-- Artikel -->
     <string name="artikel_artikelnummer">Artikelnummer:</string>
+    <string name="artikel_gewicht">Gewicht:</string>
+    <string name="artikel_wert">Wert:</string>
+    <string name="artikel_belegnummer">Belegnummer:</string>
     <string name="artikel_artikelnr">Artikelnr.:</string>
     <string name="artikel_bezeichnung">Bezeichnung:</string>
     <string name="artikel_zusatz">Zusatz:</string>
     <string name="artikel_hstartikelnummer">HstArtikelnr.:</string>
     <string name="artikel_eannummer">EAN:</string>
     <string name="artikel_menge">Menge:</string>
+    <string name="artikel_menge_offen">Menge | Offen:</string>
     <string name="artikel_bestand">Bestand:</string>
     <string name="artikel_lager">Lager:</string>
     <string name="artikel_lagerplatz">Lagerplatz:</string>
     <string name="artikel_seriecharge">SerieCharge:</string>
     <string name="artikel_seriennummer">Seriennummer:</string>
+    <string name="artikel_paket">Paket:</string>
+    <string name="artikel_seriennr">Seriennummer</string>
     <string name="artikel_charge">Charge:</string>
     <string name="artikel_select_seriennummer_contentDescription">Seriennummer auswählen</string>
     <string name="artikel_select_charge_contentDescription">Charge auswählen</string>
     <string name="artikel_hint_artikelnummer">Artikelnr., Seriennr.,…</string>
     <string name="artikel_hint_menge">Menge</string>
+    <string name="artikel_fab_contentDescription">Artikel hinzufügen</string>
+
+    <!-- Pakete -->
+    <string name="pakete_nummer"># %1$d</string>
+    <string name="pakete_gewicht">%1$.2f kg</string>
+    <string name="pakete_wert">€ %1$.2f</string>
+    <string name="pakete_contentDescription">Collapse|Expand</string>
+
+    <!-- Header -->
+    <string name="header_beleg">BELEG</string>
+    <string name="header_lieferbedingung">LIEFERBEDINGUNG</string>
+    <string name="header_verarbeitungskennzeichen">VERARBEITUNGSKENNZEICHEN</string>
+    <string name="header_paketanbindung">PAKETANBINDUNG</string>
+    <string name="header_pakete">PAKETE</string>
+    <string name="header_kunde">KUNDE</string>
+    <string name="header_lieferadresse">ABWEICHENDE LIEFERADRESSE</string>
+
+    <!-- Beleg -->
+    <string name="beleg_belegtyp">Belegtyp:</string>
+    <string name="beleg_belegnummer">Belegnummer:</string>
+    <string name="beleg_datum">Datum:</string>
+    <string name="beleg_adressnummer">Adressnummer:</string>
+    <string name="beleg_anzeigename">Anzeigename:</string>
+    <string name="beleg_lieferbedingung">Lieferbedingung:</string>
+    <string name="beleg_lieferscheine">Lieferscheine:</string>
+    <string name="beleg_lieferscheine_drucken">Lieferscheine drucken:</string>
+    <string name="beleg_rechnungen">Rechnungen:</string>
+    <string name="beleg_rechnungen_drucken">Rechnungen drucken:</string>
+    <string name="beleg_autorechnung">autom. Rechnung erstellen:</string>
+    <string name="beleg_bezeichnung">Bezeichnung:</string>
+    <string name="beleg_id">ID:</string>
+    <string name="beleg_pakete">Pakete:</string>
+    <string name="beleg_zusatz">Zusatz:</string>
+    <string name="beleg_name">Name:</string>
+    <string name="beleg_strasse">Strasse:</string>
+    <string name="beleg_plz">Plz:</string>
+    <string name="beleg_ort">Ort:</string>
+    <string name="beleg_land">Land:</string>
+
+    <!-- Belegposition -->
+    <string name="belegpositionen_offen_contentDescription">Belegpositionen-Offen</string>
+    <string name="belegpositionen_gebucht_contentDescription">Belegpositionen-Gebucht</string>
+    <string name="belegpositionen_leistungen_contentDescription">Belegpositionen-Leistungen</string>
 
     <!-- Queue -->
     <string name="queue_lagerlagerplatz">Lager | -platz:</string>
     <string name="queue_pipe">|</string>
+    <string name="queue_contentDescription">Queue Items</string>
 
     <!-- Beleg -->
     <string name="beleg_lager">Lager:</string>
     <string name="beleg_lagerplatz">Lagerplatz:</string>
     <string name="beleg_lieferant">Lieferant:</string>
+    <string name="beleg_bestellung">Bestellung:</string>
     <string name="beleg_lsnr">LS-Nr.:</string>
     <string name="beleg_lieferscheinnummer">Lieferschein-Nr.</string>
 
@@ -167,6 +256,11 @@
     <string name="title_notifications">Notifications</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_menge">Menge</string>
+    <string name="hint_id">ID</string>
+    <string name="hint_lieferbedingung">Lieferbedingung"</string>
+    <string name="search_hint">Beleg suchen</string>
+    <string name="default_number_value">1</string>
 
 
 </resources>

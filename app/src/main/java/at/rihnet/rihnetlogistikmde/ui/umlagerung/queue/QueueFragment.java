@@ -39,7 +39,7 @@ import java.util.Objects;
 
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
-import at.rihnet.rihnetlogistikmde.databinding.FragmentQueueBinding;
+import at.rihnet.rihnetlogistikmde.databinding.FragmentUmlagerungQueueBinding;
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 import at.rihnet.rihnetlogistikmde.models.Log;
 import at.rihnet.rihnetlogistikmde.models.Kategorie;
@@ -53,7 +53,7 @@ import at.rihnet.rihnetlogistikmde.ui.umlagerung.buchung.BuchungActivity;
 
 public class QueueFragment extends Fragment implements MenuProvider {
     private final String TAG = "RIHNet";
-    private FragmentQueueBinding binding;
+    private FragmentUmlagerungQueueBinding binding;
     private UmlagerungViewModel umlagerungViewModel;
     private QueueRecyclerViewAdapter queueRecyclerViewAdapter;
     private List<Artikel> queueList = new ArrayList<>();
@@ -67,7 +67,7 @@ public class QueueFragment extends Fragment implements MenuProvider {
 
     @SuppressLint("NotifyDataSetChanged")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentQueueBinding.inflate(inflater, container, false);
+        binding = FragmentUmlagerungQueueBinding.inflate(inflater, container, false);
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -169,7 +169,9 @@ public class QueueFragment extends Fragment implements MenuProvider {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+
+        //MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        MyDatabase myDatabase = MyDatabase.getInstance(requireContext());
         //new Thread(() -> {
             queueDAO = myDatabase.getQueueDAO();
             logDAO = myDatabase.getLogDAO();

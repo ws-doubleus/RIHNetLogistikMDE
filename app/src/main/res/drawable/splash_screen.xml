@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- roter Hintergrund -->
+    <item android:drawable="@color/red_dark" />
+
+    <!-- Logo zentriert -->
+    <item
+        android:drawable="@drawable/rihnet_logo_path_white"
+        android:gravity="center"
+        android:tint="@color/white"
+        android:tintMode="src_in"/>
+</layer-list>

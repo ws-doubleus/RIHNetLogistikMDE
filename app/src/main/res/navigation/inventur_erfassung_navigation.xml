@@ -7,9 +7,9 @@
 
    <fragment
         android:id="@+id/navigation_artikel"
-        android:name="at.rihnet.rihnetlogistikmde.ui.inventur.artikel.ArtikeliFragment"
+        android:name="at.rihnet.rihnetlogistikmde.ui.inventur.artikel.ArtikelFragment"
         android:label="@string/title_artikel"
-        tools:layout="@layout/fragment_artikeli" />
+        tools:layout="@layout/fragment_inventur_artikel" />
 
     <fragment
         android:id="@+id/navigation_log"

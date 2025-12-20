@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Robust: existiert garantiert, auch wenn dein eigenes Theme gerade "rot" ist -->
+    <style name="Theme" parent="Theme.Material3.DayNight.NoActionBar" />
+
+</resources>

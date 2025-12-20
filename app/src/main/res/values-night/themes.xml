@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dark: Status-/Navigationbar + Icon-Farbe -->
+    <style name="Theme.RIHNetLogistikMDE">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.RIHNetLogistikMDE.Launcher">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.RIHNetLogistikMDE.Fullscreen">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- AppBarOverlay & PopupOverlay (Dark) -->
+    <style name="Theme.RIHNetLogistikMDE.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+    <style name="Theme.RIHNetLogistikMDE.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
+
+</resources>

@@ -1,13 +1,16 @@
 package at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -18,54 +21,76 @@ import com.datalogic.decode.ReadListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import at.rihnet.rihnetlogistikmde.CommunicationSql;
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivityArtikelZubuchenBinding;
-import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.artikel.ArtikelzFragment;
-import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.lager.LagerzFragment;
+import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.artikel.ArtikelFragment;
+import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelzubuchen.lager.LagerFragment;
 
-public class ArtikelZubuchenActivity extends AppCompatActivity implements ArtikelzFragment.OnChangeTab, LagerzFragment.OnChangeTab, ArtikelzFragment.OnSearchArtikel, LagerzFragment.OnSearchLager {
-    private final String TAG = "RIHNet";
-    private BarcodeManager barcodeManager = null;
-    private ReadListener readListener = null;
+public class ArtikelZubuchenActivity extends AppCompatActivity implements ArtikelFragment.OnChangeTab, LagerFragment.OnChangeTab, ArtikelFragment.OnSearchArtikel, LagerFragment.OnSearchLager {
+    private static final String TAG = "RIHNet";
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private BarcodeManager barcodeManager;
+    private ReadListener readListener;
     private BottomNavigationView navView;
-    private MenuItem menuItem;
+    private MenuItem searchMenuItem;
     private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        at.rihnet.rihnetlogistikmde.databinding.ActivityArtikelZubuchenBinding binding = ActivityArtikelZubuchenBinding.inflate(getLayoutInflater());
+        ActivityArtikelZubuchenBinding binding = ActivityArtikelZubuchenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_playlist_add);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
-
+        initToolbar(binding.toolbar);
         navView = binding.navView;
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_artikelzubuchen);
         NavigationUI.setupWithNavController(navView, navController);
     }
 
-    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onResume() {
         super.onResume();
-        if (barcodeManager == null) {
-            barcodeManager = new BarcodeManager();
-        }
+        initBarcode();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseBarcode();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdownNow();
+    }
+
+    private void initToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.ic_playlist_add);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        toolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    private void initBarcode() {
+        if (barcodeManager == null) barcodeManager = new BarcodeManager();
         try {
-            readListener = decodeResult -> {
-                String result = decodeResult.getText().substring(0, decodeResult.getText().length() - 1);
-                menuItem.expandActionView();
-                searchView.setQuery(result, true);
+            readListener = dr -> {
+                String ean = dr.getText().replaceAll("[\r\n]+$", "");
+                mainHandler.post(() -> {
+                    if (searchMenuItem != null) searchMenuItem.expandActionView();
+                    if (searchView != null) {
+                        searchView.setQuery(ean, true); // löst onQueryTextSubmit aus
+                        // sofort leeren & schließen → bereit für nächsten Scan
+                        searchView.setQuery("", false);
+                        searchMenuItem.collapseActionView();
+                    }
+                });
             };
             barcodeManager.addReadListener(readListener);
         } catch (DecodeException e) {
@@ -73,32 +98,29 @@ public class ArtikelZubuchenActivity extends AppCompatActivity implements Artike
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (barcodeManager != null) {
+    private void releaseBarcode() {
+        if (barcodeManager != null && readListener != null) {
             try {
                 barcodeManager.removeReadListener(readListener);
-            } catch (Exception e) {
-                Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            } catch (Exception ignored) {
             }
         }
     }
 
     @Override
     public void onChangeTab(int id) {
-        navView.setSelectedItemId(id);
+        if (navView != null) navView.setSelectedItemId(id);
     }
 
     @Override
-    public void onSearchArtikel(MenuItem menuItem, SearchView searchView) {
-        this.menuItem = menuItem;
-        this.searchView = searchView;
+    public void onSearchArtikel(@NonNull MenuItem mi, @NonNull SearchView sv) {
+        this.searchMenuItem = mi;
+        this.searchView = sv;
     }
 
     @Override
-    public void onSearchLager(MenuItem menuItem, SearchView searchView) {
-        this.menuItem = menuItem;
-        this.searchView = searchView;
+    public void onSearchLager(@NonNull MenuItem mi, @NonNull SearchView sv) {
+        this.searchMenuItem = mi;
+        this.searchView = sv;
     }
 }

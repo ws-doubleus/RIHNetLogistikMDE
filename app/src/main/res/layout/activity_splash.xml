@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/red_dark"
-    android:theme="@style/ThemeOverlay.RIHNetLogistikMDE.FullscreenContainer"
+    android:background="?attr/colorPrimary"
     tools:context="at.rihnet.rihnetlogistikmde.ui.splash.SplashActivity">
 
     <ImageView
@@ -19,3 +18,4 @@
         android:contentDescription="@string/splash_description_logo" />
 
 </RelativeLayout>
+

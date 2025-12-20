@@ -21,10 +21,10 @@ import java.util.Objects;
 
 import at.rihnet.rihnetlogistikmde.R;
 import at.rihnet.rihnetlogistikmde.databinding.ActivityArtikelAbbuchenBinding;
-import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.artikel.ArtikelaFragment;
-import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.lager.LageraFragment;
+import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.artikel.ArtikelFragment;
+import at.rihnet.rihnetlogistikmde.ui.infokorrektur.artikelabbuchen.lager.LagerFragment;
 
-public class ArtikelAbbuchenActivity extends AppCompatActivity implements ArtikelaFragment.OnChangeTab, LageraFragment.OnChangeTab, ArtikelaFragment.OnSearchArtikel, LageraFragment.OnSearchLager {
+public class ArtikelAbbuchenActivity extends AppCompatActivity implements ArtikelFragment.OnChangeTab, LagerFragment.OnChangeTab, ArtikelFragment.OnSearchArtikel, LagerFragment.OnSearchLager {
     private final String TAG = "RIHNet";
     private BarcodeManager barcodeManager = null;
     private ReadListener readListener = null;

@@ -98,7 +98,8 @@ public class LogFragment extends Fragment {
             tv_empty.setVisibility(View.VISIBLE);
         }
 
-        MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        //MyDatabase myDatabase = Room.databaseBuilder(requireContext(), MyDatabase.class, "rihnetdatabase").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        MyDatabase myDatabase = MyDatabase.getInstance(requireContext());
         logDAO = myDatabase.getLogDAO();
         logList.addAll(logDAO.getLogByKategorie(Kategorie.UMLAGERUNG));
 

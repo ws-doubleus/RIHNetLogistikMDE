@@ -73,21 +73,33 @@ public class UmlagerungActivity extends AppCompatActivity implements ArtikelFrag
                 @Override
                 public void onRead(DecodeResult decodeResult) {
                     String result = decodeResult.getText().substring(0, decodeResult.getText().length() - 1);
-                    switch (navView.getSelectedItemId()){
-                        case R.id.navigation_artikel:
-                        case R.id.navigation_lager:
-                            menuItem.expandActionView();
-                            searchView.setQuery(result, true);
-                            //umlagerungViewModel.setSearchArtikel(result);
-                            break;
+//                    switch (navView.getSelectedItemId()){
+//                        case R.id.navigation_artikel:
+//                        case R.id.navigation_lager:
+//                            menuItem.expandActionView();
+//                            searchView.setQuery(result, true);
+//                            //umlagerungViewModel.setSearchArtikel(result);
+//                            break;
+//
+//                        case R.id.navigation_queue:
+//                            menuItem.expandActionView();
+//                            searchView.setQuery(result, false);
+//                            //umlagerungViewModel.setSearchQueue(result);
+//                            break;
+//                        //default:
+//                            //throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
+//                    }
+                    int currentId = navView.getSelectedItemId();
 
-                        case R.id.navigation_queue:
-                            menuItem.expandActionView();
-                            searchView.setQuery(result, false);
-                            //umlagerungViewModel.setSearchQueue(result);
-                            break;
-                        //default:
-                            //throw new IllegalStateException("Unexpected value: " + navView.getSelectedItemId());
+                    // FIX: Use if-else instead of switch
+                    if (currentId == R.id.navigation_artikel || currentId == R.id.navigation_lager) {
+                        menuItem.expandActionView();
+                        searchView.setQuery(result, true);
+                        //umlagerungViewModel.setSearchArtikel(result);
+                    } else if (currentId == R.id.navigation_queue) {
+                        menuItem.expandActionView();
+                        searchView.setQuery(result, false);
+                        //umlagerungViewModel.setSearchQueue(result);
                     }
                 }
             };

@@ -9,15 +9,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.RIHNetLogistikMDE.AppBarOverlay"
         app:elevation="2dp">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
+            style="@style/Widget.App.Toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.RIHNetLogistikMDE.PopupOverlay" />
+            android:layout_height="?attr/actionBarSize" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -25,7 +23,7 @@
         android:id="@+id/sv_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gray_200"
+        android:background="@color/grey_50"
         android:visibility="gone"
         android:layout_marginTop="?attr/actionBarSize">
 
@@ -63,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="?attr/colorAccent"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_artikelnummer_label"
                         app:layout_constraintTop_toTopOf="parent"
@@ -84,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="?attr/colorAccent"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tv_artikelnummer"
                         app:layout_constraintTop_toBottomOf="@+id/tv_artikelnummer"
@@ -105,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="?attr/colorAccent"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tv_artikelnummer"
                         app:layout_constraintTop_toBottomOf="@+id/tv_bezeichnung"
@@ -126,7 +124,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="?attr/colorAccent"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tv_artikelnummer"
                         app:layout_constraintTop_toBottomOf="@+id/tv_zusatz"
@@ -147,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="?attr/colorAccent"
+                        android:textColor="?attr/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tv_artikelnummer"
                         app:layout_constraintTop_toBottomOf="@+id/tv_hstartikelnummer"

@@ -26,6 +26,6 @@
         android:name="at.rihnet.rihnetlogistikmde.ui.settings.SettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="null" />
+        tools:layout="@android:layout/test_list_item" />
 
 </LinearLayout>

@@ -4,16 +4,30 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import at.rihnet.rihnetlogistikmde.models.Artikel;
 
 public class ArtikelinfoViewModel extends ViewModel {
     //private static final String TAG = "RIHNet";
     private final MutableLiveData<String> mSearch;
     private final MutableLiveData<Artikel> mArtikel;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public ArtikelinfoViewModel(){
         mSearch = new MutableLiveData<>();
         mArtikel = new MutableLiveData<>();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executorService.shutdownNow();
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
     public LiveData<String> getSearch() {

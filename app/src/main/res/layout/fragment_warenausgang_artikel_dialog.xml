@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="24dp"
+    tools:context=".ui.warenausgang.logistik.offen.ArtikelDialogFragment">
+
+    <TextView
+        android:id="@+id/tv_menge_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/et_lagerplatz"
+        android:text="@string/target_menge"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_menge"
+        app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+        app:layout_constraintBottom_toBottomOf="@+id/et_menge"
+        app:layout_constraintStart_toEndOf="@+id/tv_menge_label"
+        app:srcCompat="@drawable/ic_remove" />
+
+    <EditText
+        android:id="@+id/et_menge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:hint="@string/artikel_hint_menge"
+        android:inputType="number"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintEnd_toStartOf="@+id/btn_add"
+        app:layout_constraintStart_toEndOf="@+id/btn_remove"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="DuplicateSpeakableTextCheck"
+        tools:text="1" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+        app:layout_constraintBottom_toBottomOf="@+id/et_menge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/tv_seriennummer_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:labelFor="@+id/et_lagerplatz"
+        android:text="@string/artikel_seriennummer"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_seriennummer"
+        app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label"
+        tools:visibility="visible"/>
+
+    <EditText
+        android:id="@+id/et_seriennummer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:inputType="textNoSuggestions|text"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_artikelnummer"
+        app:layout_constraintTop_toBottomOf="@+id/et_menge"
+        app:layout_constraintWidth_max="480dp"
+        tools:ignore="DuplicateSpeakableTextCheck"
+        tools:text="20220534"
+        tools:visibility="visible"/>
+
+    <View
+        android:id="@+id/v_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_seriennummer" />
+
+    <TextView
+        android:id="@+id/tv_belegnummer_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/artikel_belegnummer"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label"
+        app:layout_constraintTop_toBottomOf="@+id/v_separator" />
+
+    <TextView
+        android:id="@+id/tv_belegnummer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_belegnummer_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_artikelnummer_label"
+        tools:text="2024001" />
+
+    <TextView
+        android:id="@+id/tv_pipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="@string/queue_pipe"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_belegnummer"
+        app:layout_constraintStart_toEndOf="@+id/tv_belegnummer" />
+
+    <TextView
+        android:id="@+id/tv_position"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_belegnummer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_pipe"
+        tools:text="1.1" />
+
+    <TextView
+        android:id="@+id/tv_artikelnummer_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/artikel_artikelnummer"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_belegnummer" />
+
+    <TextView
+        android:id="@+id/tv_artikelnummer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_artikelnummer_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_artikelnummer_label"
+        tools:text="125478999687" />
+
+    <TextView
+        android:id="@+id/tv_bezeichnung_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/artikel_bezeichnung"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintEnd_toEndOf="@+id/tv_artikelnummer_label"
+        app:layout_constraintTop_toBottomOf="@+id/tv_artikelnummer" />
+
+    <TextView
+        android:id="@+id/tv_bezeichnung"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_bezeichnung_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_artikelnummer"
+        tools:text="Musterartikel mit langer Bezeichnung" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

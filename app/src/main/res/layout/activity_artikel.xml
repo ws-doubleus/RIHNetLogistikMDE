@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.wareneingang.wareneingangbestellbezug.artikel.ArtikelActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_abbrechen"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_menge"
+                    style="?attr/materialCardViewElevatedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_remove"
+                            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="12dp"
+                            android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+                            app:icon="@drawable/ic_remove"
+                            app:layout_constraintBottom_toBottomOf="@+id/et_menge_layout"
+                            app:layout_constraintEnd_toStartOf="@+id/et_menge_layout"
+                            app:layout_constraintTop_toTopOf="@+id/et_menge_layout" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/et_menge_layout"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:hint="@string/artikel_hint_menge"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_menge"
+                                android:textAppearance="?attr/textAppearanceTitleMediumEmphasized"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:text="@string/default_number_value"
+                                android:textAlignment="center"
+                                android:textColor="?attr/colorPrimary"
+                                tools:ignore="DuplicateSpeakableTextCheck" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_add"
+                            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="12dp"
+                            android:contentDescription="@string/artikel_select_seriennummer_contentDescription"
+                            app:icon="@drawable/ic_add"
+                            app:layout_constraintBottom_toBottomOf="@+id/et_menge_layout"
+                            app:layout_constraintStart_toEndOf="@+id/et_menge_layout"
+                            app:layout_constraintTop_toTopOf="@+id/et_menge_layout" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/et_seriennummer_layout"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="@string/artikel_seriennr"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/et_menge_layout"
+                            tools:visibility="visible">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_seriennummer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:maxLines="1"
+                                tools:ignore="DuplicateSpeakableTextCheck"
+                                tools:text="20220534" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_details"
+                    style="?attr/materialCardViewElevatedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:stretchColumns="1">
+
+                        <TableRow>
+
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/artikel_artikelnummer" />
+
+                            <TextView
+                                android:id="@+id/tv_artikelnummer"
+                                style="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorPrimary"
+                                tools:text="0015.85.5.0" />
+                        </TableRow>
+
+                        <TableRow android:paddingTop="6dp">
+
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/artikel_bezeichnung" />
+
+                            <TextView
+                                android:id="@+id/tv_bezeichnung"
+                                style="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorPrimary"
+                                tools:text="Musterartikel" />
+                        </TableRow>
+
+                        <TableRow android:paddingTop="6dp">
+
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/artikel_zusatz" />
+
+                            <TextView
+                                android:id="@+id/tv_zusatz"
+                                style="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorPrimary"
+                                tools:text="Zusatz mit sehr langem Text und.... vieles mehr" />
+                        </TableRow>
+
+                        <TableRow android:paddingTop="6dp">
+
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/artikel_hstartikelnummer" />
+
+                            <TextView
+                                android:id="@+id/tv_hstartikelnummer"
+                                style="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorPrimary"
+                                tools:text="365555azu" />
+                        </TableRow>
+
+                        <TableRow android:paddingTop="6dp">
+
+                            <TextView
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/artikel_eannummer" />
+
+                            <TextView
+                                android:id="@+id/tv_eannummer"
+                                style="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="?attr/colorPrimary"
+                                tools:text="908785422257" />
+                        </TableRow>
+                    </TableLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_abbrechen"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/btn_abbrechen"
+            app:icon="@drawable/ic_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_hinzufuegen"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:enabled="false"
+            android:text="@string/btn_hinzufuegen"
+            app:icon="@drawable/ic_playlist_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

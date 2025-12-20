@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.wareneingang.freierwareneingang.wareneingangbestellbezug.beleg.BelegbFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/grey_50">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_50"
+            android:paddingBottom="12dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="12dp">
+
+                    <TextView
+                        android:id="@+id/tv_lieferscheinnummer_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/et_lieferscheinnummer"
+                        android:text="@string/beleg_lsnr"
+                        android:textAlignment="textStart"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label"
+                        app:layout_constraintBottom_toBottomOf="@+id/et_lieferscheinnummer"
+                        app:layout_constraintTop_toTopOf="@+id/et_lieferscheinnummer" />
+
+                    <EditText
+                        android:id="@+id/et_lieferscheinnummer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:autofillHints=""
+                        android:inputType="text"
+                        android:hint="@string/beleg_lieferscheinnummer"
+                        android:maxLines="1"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="?attr/colorPrimary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_lieferscheinnummer_label"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_max="480dp"
+                        tools:ignore="DuplicateSpeakableTextCheck,LabelFor" />
+
+                    <TextView
+                        android:id="@+id/tv_lieferanten_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/acs_lieferanten"
+                        android:text="@string/beleg_lieferant"
+                        android:textAlignment="textStart"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label"
+                        app:layout_constraintBottom_toBottomOf="@+id/acs_lieferanten"
+                        app:layout_constraintTop_toTopOf="@+id/acs_lieferanten" />
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/acs_lieferanten"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_lager_label"
+                        app:layout_constraintTop_toBottomOf="@+id/et_lieferscheinnummer"
+                        app:layout_constraintWidth_max="480dp" />
+
+                    <TextView
+                        android:id="@+id/tv_bestellungen_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/acs_bestellungen"
+                        android:text="@string/beleg_bestellung"
+                        android:textAlignment="textStart"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label"
+                        app:layout_constraintBottom_toBottomOf="@+id/acs_bestellungen"
+                        app:layout_constraintTop_toTopOf="@+id/acs_bestellungen" />
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/acs_bestellungen"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_lager_label"
+                        app:layout_constraintTop_toBottomOf="@+id/acs_lieferanten"
+                        app:layout_constraintWidth_max="480dp" />
+
+                    <TextView
+                        android:id="@+id/tv_lager_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/acs_lagerplatz"
+                        android:text="@string/beleg_lager"
+                        android:textAlignment="textStart"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_lagerplatz_label"
+                        app:layout_constraintBottom_toBottomOf="@+id/acs_lager"
+                        app:layout_constraintTop_toTopOf="@+id/acs_lager" />
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/acs_lager"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_lager_label"
+                        app:layout_constraintTop_toBottomOf="@+id/acs_bestellungen"
+                        app:layout_constraintWidth_max="480dp" />
+
+                    <TextView
+                        android:id="@+id/tv_lagerplatz_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/acs_lagerplatz"
+                        android:text="@string/beleg_lagerplatz"
+                        android:textAlignment="textStart"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/acs_lagerplatz"
+                        app:layout_constraintTop_toTopOf="@+id/acs_lagerplatz" />
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/acs_lagerplatz"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_lager_label"
+                        app:layout_constraintTop_toBottomOf="@+id/acs_lager"
+                        app:layout_constraintWidth_max="480dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_weiter"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="6dp"
+        android:text="@string/btn_weiter"
+        android:enabled="false"
+        app:icon="@drawable/ic_arrow_forward" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -94,8 +94,9 @@
             android:id="@+id/rv_lagerplatzinfo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/gray_200"
+            android:background="@color/grey_50"
             android:clipToPadding="false"
+            android:importantForAccessibility="no"
             android:paddingTop="9dp"
             android:paddingBottom="9dp" />
 

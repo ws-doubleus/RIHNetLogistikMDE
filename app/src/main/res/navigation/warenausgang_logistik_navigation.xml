@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/warenausgang_logistik_navigation"
+    app:startDestination="@+id/navigation_offen">
+
+    <fragment
+        android:id="@+id/navigation_offen"
+        android:name="at.rihnet.rihnetlogistikmde.ui.warenausgang.logistik.offen.OffenFragment"
+        android:label="@string/title_offen"
+        tools:layout="@layout/fragment_warenausgang_offen" />
+
+    <fragment
+        android:id="@+id/navigation_gebucht"
+        android:name="at.rihnet.rihnetlogistikmde.ui.warenausgang.logistik.gebucht.GebuchtFragment"
+        android:label="@string/title_gebucht"
+        tools:layout="@layout/fragment_warenausgang_gebucht" />
+
+    <fragment
+        android:id="@+id/navigation_leistungen"
+        android:name="at.rihnet.rihnetlogistikmde.ui.warenausgang.logistik.leistungen.LeistungenFragment"
+        android:label="@string/title_leistungen"
+        tools:layout="@layout/fragment_warenausgang_leistungen" />
+
+    <fragment
+        android:id="@+id/navigation_beleg"
+        android:name="at.rihnet.rihnetlogistikmde.ui.warenausgang.logistik.beleg.BelegFragment"
+        android:label="@string/title_beleg"
+        tools:layout="@layout/fragment_warenausgang_beleg" />
+
+    <fragment
+        android:id="@+id/navigation_log"
+        android:name="at.rihnet.rihnetlogistikmde.ui.warenausgang.logistik.log.LogFragment"
+        android:label="@string/title_log"
+        tools:layout="@layout/fragment_log" />
+</navigation>
