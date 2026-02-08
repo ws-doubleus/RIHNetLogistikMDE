@@ -17,6 +17,7 @@ public class ArtikelAbbuchenViewModel extends ViewModel {
     private final MutableLiveData<String> mSearchLager;
     private final MutableLiveData<Boolean> mResetArtikel;
     private final MutableLiveData<List<Log>> mLogList;
+    private final MutableLiveData<Double> mMenge;
 
     public ArtikelAbbuchenViewModel() {
         mArtikel = new MutableLiveData<>();
@@ -25,6 +26,8 @@ public class ArtikelAbbuchenViewModel extends ViewModel {
         mResetArtikel = new MutableLiveData<>();
         mLogList = new MutableLiveData<>();
         mLogList.setValue(new ArrayList<>());
+        mMenge = new MutableLiveData<>();
+        mMenge.setValue(1.0);
     }
 
     public LiveData<Artikel> getArtikel() {
@@ -33,6 +36,14 @@ public class ArtikelAbbuchenViewModel extends ViewModel {
 
     public void setArtikel(Artikel artikel) {
         mArtikel.setValue(artikel);
+    }
+
+    public LiveData<Double> getMenge() {
+        return mMenge;
+    }
+
+    public void setMenge(double menge) {
+        mMenge.setValue(menge);
     }
 
     public LiveData<String> getSearchArtikel() {

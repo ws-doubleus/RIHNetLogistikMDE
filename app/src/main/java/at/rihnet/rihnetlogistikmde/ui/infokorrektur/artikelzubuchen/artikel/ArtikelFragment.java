@@ -33,6 +33,9 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 import at.rihnet.rihnetlogistikmde.AsyncTaskExecutorService;
 import at.rihnet.rihnetlogistikmde.CommunicationCommon;
 import at.rihnet.rihnetlogistikmde.CommunicationSql;
@@ -54,6 +57,7 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
     private ArtikelViewModel artikelViewModel;
     private EditText et_menge;
     private AppCompatImageButton btn_add;
+    private AppCompatImageButton btn_remove;
     private AppCompatImageButton btn_seriennummercharge;
     private TextView tv_artikelnummer;
     private TextView tv_seriennummercharge_label;
@@ -62,6 +66,8 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
     private Button btn_weiter;
     private Artikel artikel;
     private String previousQuery = "";
+    private final DecimalFormat decimalFormat = new DecimalFormat("0.###", DecimalFormatSymbols.getInstance());
+    private boolean isUpdatingMenge;
 
     public interface OnChangeTab {
         void onChangeTab(int id);
@@ -84,7 +90,7 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
         final TextView tv_bezeichnung = binding.tvBezeichnung;
         final TextView tv_zusatz = binding.tvZusatz;
         final TextView tv_hstartikelnummer = binding.tvHstartikelnummer;
-        final AppCompatImageButton btn_remove = binding.btnRemove;
+        btn_remove = binding.btnRemove;
         final Button btn_reset = binding.btnReset;
 
         et_menge = binding.etMenge;
@@ -94,6 +100,9 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
         btn_add = binding.btnAdd;
         btn_seriennummercharge = binding.btnSeriennummercharge;
         btn_weiter = binding.btnWeiter;
+        decimalFormat.setGroupingUsed(false);
+
+        setMengeValue(getViewModelMenge());
 
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -123,28 +132,15 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
         );
 
         btn_remove.setOnClickListener(view -> {
-            if (et_menge.getText().length() > 0) {
-                int value = Integer.parseInt(et_menge.getText().toString());
-                if (value > 1) {
-                    value--;
-                } else {
-                    value = 1;
-                }
-                et_menge.setText(String.valueOf(value));
-                if (artikel != null) {
-                    artikel.setMenge(value);
-                    artikelViewModel.setArtikel(artikel);
-                }
+            double value = getMengeFromInput();
+            if (value > 1) {
+                value -= 1;
             } else {
-                et_menge.setText("1");
-                if (artikel != null) {
-                    artikel.setMenge(1);
-                    artikelViewModel.setArtikel(artikel);
-                }
+                value = 1;
             }
+            setMengeValue(value);
         });
-        btn_remove.setEnabled(false);
-        btn_remove.setImageAlpha(50);
+        updateRemoveButton(getViewModelMenge());
 
         TextWatcher mengeTextWatcher = new TextWatcher() {
             @Override
@@ -159,16 +155,18 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().equals("0")) {
-                    et_menge.setText("1");
+                if (isUpdatingMenge) {
+                    return;
                 }
-                if (editable.toString().isEmpty() || editable.toString().equals("0") || editable.toString().equals("1")) {
-                    btn_remove.setEnabled(false);
-                    btn_remove.setImageAlpha(50);
-                } else {
-                    btn_remove.setEnabled(true);
-                    btn_remove.setImageAlpha(255);
+                Double parsed = parseMengeValue(editable.toString());
+                if (parsed != null && parsed == 0) {
+                    setMengeValue(1);
+                    return;
                 }
+                if (parsed != null) {
+                    artikelZubuchenViewModel.setMenge(parsed);
+                }
+                updateRemoveButton(parsed);
             }
         };
         et_menge.addTextChangedListener(mengeTextWatcher);
@@ -192,21 +190,8 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
         tv_seriennummercharge.addTextChangedListener(seriennummerTextWatcher);
 
         btn_add.setOnClickListener(view -> {
-            if (et_menge.getText().length() > 0) {
-                if (artikel != null) {
-                    artikel.setMenge(Integer.parseInt(et_menge.getText().toString()) + 1);
-                    artikelViewModel.setArtikel(artikel);
-                } else {
-                    et_menge.setText(String.valueOf(Integer.parseInt(et_menge.getText().toString()) + 1));
-                }
-            } else {
-                if (artikel != null) {
-                    artikel.setMenge(1);
-                    artikelViewModel.setArtikel(artikel);
-                } else {
-                    et_menge.setText("1");
-                }
-            }
+            double value = getMengeFromInput();
+            setMengeValue(value + 1);
         });
 
         btn_seriennummercharge.setOnClickListener(view -> {
@@ -232,6 +217,7 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
             btn_add.setImageAlpha(255);
             artikelViewModel.resetArtikel();
             artikelZubuchenViewModel.setArtikel(null);
+            setMengeValue(1);
             ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
         });
 
@@ -243,7 +229,7 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
         artikelViewModel.getArtikel().observe(getViewLifecycleOwner(), artikel -> {
             this.artikel = artikel;
             if (artikel != null && !artikel.getSerieCharge().equals("S")) {
-                et_menge.setText(String.valueOf(artikel.getMenge()));
+                setMengeValue(getViewModelMenge());
                 tv_artikelnummer.setText(artikel.getArtikelnummer());
                 tv_bezeichnung.setText(artikel.getBezeichnung());
                 tv_zusatz.setText(artikel.getZusatz());
@@ -268,7 +254,7 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
                 } else if (artikel.getSerieCharge().equals("S")) {
                     Toast.makeText(getContext(), "Artikelnummer: " + artikelZubuchenViewModel.getSearchArtikel().getValue() + "\nArtikel mit Seriennummer werden noch nicht unterstützt!", Toast.LENGTH_LONG).show();
                 }
-                et_menge.setText("1");
+                setMengeValue(1);
                 tv_artikelnummer.setText("");
                 tv_bezeichnung.setText("");
                 tv_zusatz.setText("");
@@ -393,6 +379,47 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
         }
     }
 
+    private double getViewModelMenge() {
+        Double menge = artikelZubuchenViewModel.getMenge().getValue();
+        return menge != null ? menge : 1;
+    }
+
+    private double getMengeFromInput() {
+        Double parsed = parseMengeValue(et_menge.getText().toString());
+        return parsed != null ? parsed : getViewModelMenge();
+    }
+
+    private void setMengeValue(double value) {
+        artikelZubuchenViewModel.setMenge(value);
+        String formatted = decimalFormat.format(value);
+        isUpdatingMenge = true;
+        et_menge.setText(formatted);
+        et_menge.setSelection(formatted.length());
+        isUpdatingMenge = false;
+        updateRemoveButton(value);
+    }
+
+    private void updateRemoveButton(Double value) {
+        boolean enable = value != null && value > 1;
+        btn_remove.setEnabled(enable);
+        btn_remove.setImageAlpha(enable ? 255 : 50);
+    }
+
+    private Double parseMengeValue(String input) {
+        if (input == null) {
+            return null;
+        }
+        String normalized = input.replace(",", ".").trim();
+        if (normalized.isEmpty() || ".".equals(normalized)) {
+            return null;
+        }
+        try {
+            return Double.parseDouble(normalized);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
     public class LoadArtikelAsyncTask extends AsyncTaskExecutorService<String[], Void, Artikel> {
         @Override
         protected void onPreExecute() {
@@ -416,13 +443,15 @@ public class ArtikelFragment extends Fragment implements MenuProvider {
                 setSeriennummerChargeViewVisibility(View.GONE);
             } else {
                 if (artikel.getSerieCharge().equals("S")) {
-                    artikel.setMenge(1);
-                    et_menge.setText("1");
+                    setMengeValue(1);
                     et_menge.setEnabled(false);
                     btn_add.setEnabled(false);
                     btn_add.setImageAlpha(50);
                 } else {
-                    artikel.setMenge(Integer.parseInt(et_menge.getText().toString()));
+                    Double menge = parseMengeValue(et_menge.getText().toString());
+                    if (menge != null) {
+                        artikelZubuchenViewModel.setMenge(menge);
+                    }
                     et_menge.setEnabled(true);
                     btn_add.setEnabled(true);
                     btn_add.setImageAlpha(255);

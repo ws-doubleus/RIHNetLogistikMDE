@@ -199,6 +199,10 @@ public class CommunicationSelectLine {
     }
 
     public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, String zielLager, int zielLagerplatzId, int menge) {
+        return storePosition(manualStorageNumber, artikel, zielLager, zielLagerplatzId, (double) menge);
+    }
+
+    public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, String zielLager, int zielLagerplatzId, double menge) {
         try {
             OkHttpClient client = buildTrustAllClient();
 
@@ -251,6 +255,10 @@ public class CommunicationSelectLine {
     }
 
     public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, int menge) {
+        return storePosition(manualStorageNumber, artikel, (double) menge);
+    }
+
+    public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, double menge) {
         try {
             OkHttpClient client = buildTrustAllClient();
 
@@ -842,10 +850,18 @@ public class CommunicationSelectLine {
     }
 
     public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, int menge) throws IOException {
+        return storePosition(manualStorageNumber, artikel, null, 0, (double) menge);
+    }
+
+    public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, double menge) throws IOException {
         return storePosition(manualStorageNumber, artikel, null, 0, menge);
     }
 
     public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, String zielLager, int zielLagerplatzId, int menge) throws IOException {
+        return storePosition(manualStorageNumber, artikel, zielLager, zielLagerplatzId, (double) menge);
+    }
+
+    public static ManualStorageCreated storePosition(String manualStorageNumber, Artikel artikel, String zielLager, int zielLagerplatzId, double menge) throws IOException {
         DocumentPositionStoreInformation info = new DocumentPositionStoreInformation();
         info.setQuantity(menge);
         info.setArticleNumber(artikel.getArtikelnummer());
@@ -1220,7 +1236,5 @@ public class CommunicationSelectLine {
                 .build();
     }
 }
-
-
 
 

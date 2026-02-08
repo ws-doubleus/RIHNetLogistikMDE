@@ -20,6 +20,7 @@ public class ArtikelZubuchenViewModel extends ViewModel {
     private final MutableLiveData<String> mSearchLager;
     private final MutableLiveData<Boolean> mResetArtikel;
     private final MutableLiveData<List<Log>> mLogList;
+    private final MutableLiveData<Double> mMenge;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public ArtikelZubuchenViewModel() {
@@ -29,6 +30,8 @@ public class ArtikelZubuchenViewModel extends ViewModel {
         mResetArtikel = new MutableLiveData<>();
         mLogList = new MutableLiveData<>();
         mLogList.setValue(new ArrayList<>());
+        mMenge = new MutableLiveData<>();
+        mMenge.setValue(1.0);
     }
 
     @Override
@@ -52,8 +55,17 @@ public class ArtikelZubuchenViewModel extends ViewModel {
         mArtikel.setValue(artikel);
     }
 
+    public LiveData<Double> getMenge() {
+        return mMenge;
+    }
+
+    public void setMenge(double menge) {
+        mMenge.setValue(menge);
+    }
+
     public void resetArtikel() {
         mArtikel.setValue(new Artikel("", "", "", "", "", "", 1, 1, "", "", "","", 0, "", Kategorie.ARTIKELZUBUCHEN));
+        mMenge.setValue(1.0);
     }
 
     public LiveData<String> getSearchArtikel() {
