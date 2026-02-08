@@ -130,7 +130,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 tv_seriennummercharge_label.setVisibility(View.GONE);
                 tv_seriennummercharge.setVisibility(View.GONE);
             }
-            tv_menge.setText(String.valueOf(artikel.getMenge()));
+            tv_menge.setText(String.valueOf(getViewModelMenge()));
             btn_buchen.setEnabled(true);
         }
 
@@ -300,11 +300,19 @@ public class LagerFragment extends Fragment implements MenuProvider {
         }
     }
 
+    private double getViewModelMenge() {
+        Double menge = artikelAbbuchenViewModel.getMenge().getValue();
+        return menge != null ? menge : 1;
+    }
+
     public void doIt() {
         try {
             LagerplatzBestand lb = (LagerplatzBestand) acs_lagerplatz.getSelectedItem();
-            if (artikel.getMenge() > lb.getBestand()) {
-                artikel.setMenge(lb.getBestand());
+            double menge = getViewModelMenge();
+            if (menge > lb.getBestand()) {
+                menge = lb.getBestand();
+                artikelAbbuchenViewModel.setMenge(menge);
+                tv_menge.setText(String.valueOf(menge));
                 Toast.makeText(requireContext(), "Die Menge wurde auf " + lb.getBestand() + " Stück reduziert, da der Bestand für diese Charge nicht größer ist!", Toast.LENGTH_LONG).show();
             }
 
@@ -319,10 +327,10 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 ManualStorageCreated manualStorageCreated = CommunicationSelectLine.createManualStorage(standort);
                 if (manualStorageCreated != null) {
                     android.util.Log.i(TAG, "Belegnummer: " + manualStorageCreated.getManualStorageNumber() + " | Manuelle Lagerung => Beleg erfolgreich erstellt!");
-                    ManualStorageCreated msc = CommunicationSelectLine.storePosition(manualStorageCreated.getManualStorageNumber(), artikel, artikel.getMenge() * -1);
+                    ManualStorageCreated msc = CommunicationSelectLine.storePosition(manualStorageCreated.getManualStorageNumber(), artikel, menge * -1);
                     if (msc != null) {
                         android.util.Log.i(TAG, "Belegnummer: " + msc.getManualStorageNumber() + " | Manuelle Lagerung => Belegposition erfolgreich erstellt!");
-                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() * -1 + "\nArtikel Abbuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.ARTIKELABBUCHEN);
+                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + (menge * -1) + "\nArtikel Abbuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.ARTIKELABBUCHEN);
                         artikelAbbuchenViewModel.addLog(log);
                         executor.execute(() -> logDAO.insert(log));
                         int res = CommunicationSql.updateBelegFreierText1ByBelegtypBelegnummer(sqlServerData, "M", msc.getManualStorageNumber(), ((Grund)acs_grund.getSelectedItem()).getGrund());
@@ -332,7 +340,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
                     //CommunicationSelectLine.updateManualStorageAsync(manualStorageCreated.getManualStorageNumber(),((Grund)acs_grund.getSelectedItem()).getGrund(), devicename);
 
                 } else {
-                    Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() * -1 + "\nArtikel Abbuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.ARTIKELABBUCHEN);
+                    Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + (menge * -1) + "\nArtikel Abbuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.ARTIKELABBUCHEN);
                     artikelAbbuchenViewModel.addLog(log);
                     executor.execute(() -> logDAO.insert(log));
                 }
@@ -358,6 +366,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
         btn_buchen.setEnabled(false);
         artikelAbbuchenViewModel.setResetArtikel(true);
         artikelAbbuchenViewModel.setArtikel(null);
+        artikelAbbuchenViewModel.setMenge(1);
         changeTab.onChangeTab(R.id.navigation_log);
         if (loadingDialogFragment != null) {
             loadingDialogFragment.dismiss();

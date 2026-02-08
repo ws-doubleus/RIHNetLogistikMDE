@@ -129,7 +129,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 tv_seriennummercharge_label.setVisibility(View.GONE);
                 tv_seriennummercharge.setVisibility(View.GONE);
             }
-            tv_menge.setText(String.valueOf(artikel.getMenge()));
+            tv_menge.setText(String.valueOf(getViewModelMenge()));
             btn_buchen.setEnabled(true);
         }
 
@@ -287,6 +287,11 @@ public class LagerFragment extends Fragment implements MenuProvider {
         }
     }
 
+    private double getViewModelMenge() {
+        Double menge = artikelZubuchenViewModel.getMenge().getValue();
+        return menge != null ? menge : 1;
+    }
+
     public void doIt() {
         try {
             String appKey = prefs.getString("appkey", "");
@@ -300,10 +305,11 @@ public class LagerFragment extends Fragment implements MenuProvider {
                 ManualStorageCreated manualStorageCreated = CommunicationSelectLine.createManualStorage(standort);
                 if (manualStorageCreated != null) {
                     android.util.Log.i(TAG, "Belegnummer: " + manualStorageCreated.getManualStorageNumber() + " | Manuelle Lagerung => Beleg erfolgreich erstellt!");
-                    ManualStorageCreated msc = CommunicationSelectLine.storePosition(manualStorageCreated.getManualStorageNumber(), artikel, artikel.getMenge());
+                    double menge = getViewModelMenge();
+                    ManualStorageCreated msc = CommunicationSelectLine.storePosition(manualStorageCreated.getManualStorageNumber(), artikel, menge);
                     if (msc != null) {
                         android.util.Log.i(TAG, "Belegnummer: " + msc.getManualStorageNumber() + " | Manuelle Lagerung => Belegposition erfolgreich erstellt!");
-                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.ARTIKELZUBUCHEN);
+                        Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + menge + "\nArtikel Zubuchung erfolgreich!", ContextCompat.getColor(requireContext(), R.color.green_500), Kategorie.ARTIKELZUBUCHEN);
                         artikelZubuchenViewModel.addLog(log);
                         executor.execute(() -> logDAO.insert(log));
                         int res = CommunicationSql.updateBelegFreierText1ByBelegtypBelegnummer(sqlServerData, "M", msc.getManualStorageNumber(), ((Grund) acs_grund.getSelectedItem()).getGrund());
@@ -312,7 +318,8 @@ public class LagerFragment extends Fragment implements MenuProvider {
                     //String benutzer = sharedPreferences.getString(LoginActivity.BENUTZER, "");
                     //CommunicationSelectLine.updateManualStorageAsync(manualStorageCreated.getManualStorageNumber(),((Grund)acs_grund.getSelectedItem()).getGrund(), devicename);
                 } else {
-                    Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + artikel.getMenge() + "\nArtikel Zubuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.ARTIKELZUBUCHEN);
+                    double menge = getViewModelMenge();
+                    Log log = new at.rihnet.rihnetlogistikmde.models.Log("Artikelnummer: " + artikel.getArtikelnummer() + "\nMenge: " + menge + "\nArtikel Zubuchung fehlerhaft!", ContextCompat.getColor(requireContext(), R.color.red_500), Kategorie.ARTIKELZUBUCHEN);
                     artikelZubuchenViewModel.addLog(log);
                     executor.execute(() -> logDAO.insert(log));
                 }
@@ -337,6 +344,7 @@ public class LagerFragment extends Fragment implements MenuProvider {
         btn_buchen.setEnabled(false);
         artikelZubuchenViewModel.setResetArtikel(true);
         artikelZubuchenViewModel.setArtikel(null);
+        artikelZubuchenViewModel.setMenge(1);
         changeTab.onChangeTab(R.id.navigation_log);
         if (loadingDialogFragment != null) {
             loadingDialogFragment.dismiss();

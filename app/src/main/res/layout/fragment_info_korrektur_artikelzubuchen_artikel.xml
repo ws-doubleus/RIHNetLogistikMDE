@@ -61,7 +61,7 @@
                         android:layout_weight="1"
                         android:autofillHints=""
                         android:hint="@string/artikel_hint_menge"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:maxLines="1"
                         android:text="1"
                         android:textAlignment="center"
